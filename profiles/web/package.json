@@ -1,0 +1,35 @@
+{
+  "name": "dsh-profile-web",
+  "private": true,
+  "dependencies": {
+    "@linxin666/dsh-client-ui-skill-explorer": "^0.4.8",
+    "@linxin666/dsh-usage": "^0.4.8",
+    "@local/dsh-chat-preset": "link:__SETUP_ROOT__/plugins/dsh-chat-preset",
+    "@perrylink/dsh-github": "^0.7.27",
+    "dsh-better-sidebar": "^0.28.0",
+    "dsh-codex": "^0.3.2",
+    "dsh-pocket": "^2.12.0",
+    "dsh-preset-switcher": "github:neutronslime/dsh-preset-switcher-fork",
+    "dsh-prompt-enhance": "^0.3.2"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app",
+        "@local/dsh-chat-preset",
+        "dsh-codex",
+        "@deepseek-ai/dsh-experimental-auto-review",
+        "dsh-pocket",
+        "@linxin666/dsh-client-ui-skill-explorer",
+        "@linxin666/dsh-usage",
+        "dsh-better-sidebar",
+        "dsh-preset-switcher",
+        "dsh-prompt-enhance",
+        "@deepseek-ai/dsh-experimental-session-titles-bundle",
+        "@perrylink/dsh-github"
+      ],
+      "patchReload": "live"
+    }
+  }
+}

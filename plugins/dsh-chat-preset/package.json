@@ -1,0 +1,14 @@
+{
+  "name": "@local/dsh-chat-preset",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./guard": "./lib/guard.js"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

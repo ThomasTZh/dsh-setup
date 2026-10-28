@@ -1,0 +1,179 @@
+# Third-party and external sources this setup depends on.
+#
+# This file is the registry. Nothing third-party is copied into the repository;
+# every entry points at the project's own repository, and CREDITS.md is the
+# human-readable view of the same list.
+#
+# kind:        dsh-bundle | dsh-plugin | skill | toolkit | mcp | library | local
+# license:     the SPDX identifier where the project states one
+# pin:         the constraint declared in the profile
+# installed:   the version resolved on 2026-10-28
+# repository:  the project's own GitHub URL, for credit and for browsing
+
+schema: 1
+snapshot: 2026-10-28
+harness: 0.2.1-rc.2
+
+upstreams:
+  - name: DeepSeek Harness
+    kind: dsh-bundle
+    repository: https://github.com/deepseek-ai/deepseek-harness
+    pin: 0.2.1-rc.2
+    installed: 0.2.1-rc.2
+    license: MIT
+    note: >-
+      Ships the base, web-app, auto-review, and session-titles bundles, the
+      shipped standard/minimal/ptc/cordis presets, the @deepseek-ai/* rows the
+      presets mount, and the js-yaml copy matlab-reference loads.
+
+  - name: "@deepseek-ai/dsh-experimental-auto-review"
+    kind: dsh-bundle
+    repository: https://github.com/deepseek-ai/deepseek-harness
+    pin: bundled with the harness
+    installed: 0.2.1-rc.2
+    license: MIT
+
+  - name: "@deepseek-ai/dsh-experimental-session-titles-bundle"
+    kind: dsh-bundle
+    repository: https://github.com/deepseek-ai/deepseek-harness
+    pin: bundled with the harness
+    installed: 0.2.1-rc.2
+    license: MIT
+
+  - name: dsh-codex
+    kind: dsh-plugin
+    repository: https://github.com/Yan-Zero/dsh-codex
+    pin: "^0.3.2"
+    installed: 0.3.2
+    license: Apache-2.0
+    note: Provides the openai-codex provider and the llm-openai-codex row.
+
+  - name: dsh-pocket
+    kind: dsh-plugin
+    repository: https://github.com/shaobeichen/dsh-pocket
+    pin: "^2.12.0"
+    installed: 2.12.0
+    license: GPL-2.0
+    note: >-
+      Opens a tunnel proxy for the Web UI; on the recorded machine it falls to
+      3082 because 3081 is taken.
+
+  - name: dsh-better-sidebar
+    kind: dsh-plugin
+    repository: https://github.com/omdsh-dev/DSH-better-sidebar
+    pin: "^0.28.0"
+    installed: 0.28.0
+    license: MIT
+    note: Client UI only; configured with agentOpenTools.
+
+  - name: dsh-preset-switcher
+    kind: dsh-plugin
+    repository: https://github.com/neutronslime/dsh-preset-switcher-fork
+    pin: github:neutronslime/dsh-preset-switcher-fork
+    installed: 0.1.3
+    license: MIT
+    note: >-
+      Fork of jeffcwj/dsh-preset-switcher (https://github.com/jeffcwj/dsh-preset-switcher)
+      updated for DSH 0.2.1. Switches the session preset after the conversation
+      started, which the stock UI refuses.
+
+  - name: dsh-prompt-enhance
+    kind: dsh-plugin
+    repository: https://github.com/rongxingda/dsh-prompt-enhance
+    pin: "^0.3.2"
+    installed: 0.3.2
+    license: Apache-2.0
+
+  - name: "@linxin666/dsh-client-ui-skill-explorer"
+    kind: dsh-plugin
+    repository: https://github.com/zhu1090093659/dsh-web
+    pin: "^0.4.8"
+    installed: 0.4.8
+    license: BSD-3-Clause
+    note: >-
+      Part of the zhu1090093659/dsh-web plugin ecosystem (Apache-2.0 at the
+      repository level; BSD-3-Clause as declared by the package). Provides the
+      Skill Center panel; the row web-ui-skill-explorer is enabled.
+
+  - name: "@linxin666/dsh-usage"
+    kind: dsh-plugin
+    repository: https://github.com/zhu1090093659/dsh-web
+    pin: "^0.4.8"
+    installed: 0.4.8
+    license: Apache-2.0
+    note: Token and cost card; state under ~/.dsh/dsh-usage.
+
+  - name: "@perrylink/dsh-github"
+    kind: dsh-plugin
+    repository: https://github.com/PerryLink/dsh-github
+    pin: "^0.7.27"
+    installed: 0.7.27
+    license: Apache-2.0
+
+  - name: ub-mode
+    kind: skill
+    repository: https://github.com/unclebob/ub-mode
+    pin: 57a8bdd28e45ed41900ace0bafa2ff76dd9ed70f (2026-10-25)
+    installed: 57a8bdd (SKILL.md only)
+    license: none declared upstream
+    note: >-
+      Installed at ~/.agents/skills/ub-mode and symlinked into the on-request
+      root both local presets scan. Not copied here: the text is upstream's.
+
+  - name: MATLAB Agentic Toolkit
+    kind: toolkit
+    repository: https://github.com/matlab/matlab-agentic-toolkit
+    pin: local install at ~/.matlab/agentic-toolkits/matlab (2026 snapshot)
+    installed: skills-catalog, 120 skills
+    license: MathWorks BSD-3-Clause, use restricted to MathWorks products
+    note: >-
+      120 skills symlinked into ~/.agents/skills, plus the matlab-core subset
+      the matlab preset scans directly. matlab-reference indexes the catalogue;
+      nothing is copied. The toolkit's own citation points at the repository
+      above.
+
+  - name: Playwright MCP
+    kind: mcp
+    repository: https://github.com/microsoft/playwright-mcp
+    pin: local install under ~/.local/share/playwright-mcp
+    installed: .bin/playwright-mcp
+    license: Apache-2.0
+    note: >-
+      Mounted as the playwright-mcp MCP server in both presets; local-ai-policy
+      asks before every call.
+
+  - name: js-yaml
+    kind: library
+    repository: https://github.com/nodeca/js-yaml
+    pin: as bundled with the harness
+    installed: harness copy
+    license: MIT
+    note: Loaded by matlab-reference through the harness package to parse skill front matter.
+
+  - name: local web gateway
+    kind: local
+    repository: none, unpublished
+    pin: ~/.config/local-ai/web-gateway.py
+    installed: local file
+    license: unstated
+    note: >-
+      Provides mcp__web__web_search, web_fetch, and web_crawl over the local
+      SearXNG and Crawl4AI stack. Mounted as local-web-mcp in both presets and
+      referenced by absolute path in the profile patch, so restoring this
+      repository does not restore it.
+
+  - name: office MCP server
+    kind: local
+    repository: none, unpublished
+    pin: __HOME__/Documents/__WORKSPACE__/officeProjects/setup/office
+    installed: local project
+    license: unstated
+    note: Mounted as office-mcp in both presets; outside this repository.
+
+  - name: matlab-server
+    kind: local
+    repository: none, unpublished
+    pin: ~/.config/local-ai/matlab-server
+    installed: local file
+    license: unstated
+    note: Mounted as matlab-mcp in the matlab preset only.

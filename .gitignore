@@ -1,0 +1,10 @@
+# Dependencies are resolved by the profile, not vendored here.
+node_modules/
+pnpm-lock.yaml
+
+# Backups and editor scratch.
+*.bak-*
+
+# Local scratch.
+*.log
+.DS_Store
