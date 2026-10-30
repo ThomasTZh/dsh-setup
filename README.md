@@ -16,22 +16,32 @@ The [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) configur
 
 ### Layout
 
-| Path | Installs to | Contents |
+Original files first, then the records for third-party work. Install destinations are in [Restore](#restore).
+
+**Original**
+
+| Name | Path | Contents |
 |---|---|---|
-| [`profiles/web/cordis.patch.yml`](profiles/web/cordis.patch.yml) | `$DSH_HOME/profiles/web/` | Loader overrides and both local presets |
-| [`profiles/web/package.json`](profiles/web/package.json) | `$DSH_HOME/profiles/web/` | Dependencies and the bundle list |
-| [`plugins/dsh-chat-preset/`](plugins/dsh-chat-preset) | `$DSH_HOME/local-plugins/` | The `chat` preset bundle and its tool guard |
-| [`local-ai/policy.mjs`](local-ai/policy.mjs) | `$LOCAL_AI/` | Per-call tool policy for both presets |
-| [`local-ai/plugins/matlab-reference.mjs`](local-ai/plugins/matlab-reference.mjs) | `$LOCAL_AI/plugins/` | MATLAB skill search and read tools |
-| [`local-ai/plugins/kde-notify.mjs`](local-ai/plugins/kde-notify.mjs) | `$LOCAL_AI/plugins/` | Desktop notifications |
-| [`local-ai/notifications.mjs`](local-ai/notifications.mjs) | `$LOCAL_AI/` | Delivery, throttling, and logging for the above |
-| [`skills/brainstorm/`](skills/brainstorm) | `$HOME/.agents/skills/` | One skill, symlinked into the on-request root |
-| [`skills/pub-gh/`](skills/pub-gh) | `$HOME/.agents/skills/` | The GitHub release skill and its two templates, symlinked the same way |
-| [`AGENTS.md`](AGENTS.md) | `$DSH_HOME/` | Global instructions |
-| [`upstreams.yml`](upstreams.yml) | not installed | Source registry: pins, licences, what is not here |
-| [`docs/inventory.md`](docs/inventory.md) | not installed | The live composition and the reasoning behind it |
-| [`THIRD_PARTY.md`](THIRD_PARTY.md) | not installed | Every third-party project, with its repository link |
-| [`LICENSE`](LICENSE) | not installed | MIT, covering the original files only |
+| Profile patch | [`profiles/web/cordis.patch.yml`](profiles/web/cordis.patch.yml) | Loader overrides and both local presets |
+| Profile dependencies | [`profiles/web/package.json`](profiles/web/package.json) | Dependencies and the bundle list |
+| Chat preset | [`plugins/dsh-chat-preset/`](plugins/dsh-chat-preset) | The `chat` preset and its tool guard |
+| Tool policy | [`local-ai/policy.mjs`](local-ai/policy.mjs) | Per-call policy for both presets |
+| MATLAB reference | [`local-ai/plugins/matlab-reference.mjs`](local-ai/plugins/matlab-reference.mjs) | Skill search and read tools |
+| Desktop notifications | [`local-ai/plugins/kde-notify.mjs`](local-ai/plugins/kde-notify.mjs) | KDE Connect delivery |
+| Notification core | [`local-ai/notifications.mjs`](local-ai/notifications.mjs) | Throttling and logging |
+| Brainstorm | [`skills/brainstorm/`](skills/brainstorm) | One skill |
+| pub-gh | [`skills/pub-gh/`](skills/pub-gh) | Release skill and two templates |
+| Global instructions | [`AGENTS.md`](AGENTS.md) | Instructions for every session |
+| Inventory | [`docs/inventory.md`](docs/inventory.md) | Override table and reasoning |
+| Licence | [`LICENSE`](LICENSE) | MIT, original files only |
+| Changelog | [`CHANGELOG.md`](CHANGELOG.md) | What changed, newest first |
+
+**Third-party records**
+
+| Name | Path | Contents |
+|---|---|---|
+| Source registry | [`upstreams.yml`](upstreams.yml) | Pins, licences, what is not here |
+| Attribution | [`THIRD_PARTY.md`](THIRD_PARTY.md) | Per-project credit and compliance |
 
 ### The profile
 

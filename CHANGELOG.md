@@ -7,6 +7,7 @@ Newest first, ordered rather than dated. The repository records the configuratio
 - README rebuilt to the release structure: Abstract, Composition, Verification, Conclusion, Acknowledgements, References. It now states the problem the repository answers, the restore procedure, and the checks with their outcomes.
 - `CREDITS.md` replaced by `THIRD_PARTY.md`, which adds sections for modified upstream components (none), unmodified dependencies, and copyright and licence compliance.
 - MIT `LICENSE` added, covering the original files only and naming them explicitly.
+- Layout reduced to name, path, and contents, with original files first and third-party records second; the install destinations now live only in the restore block.
 - Removed record dating: no snapshot line in the README, no `snapshot` field in `upstreams.yml`, no recording dates in pins or prose.
 - Verification now reports what was actually run: YAML parsing, `node --check`, both test suites, the documented restore block executed against an empty target, the composition dump, link resolution, and the privacy scan, followed by the untested items and the `web-ui-*` warnings the dump emits.
 
