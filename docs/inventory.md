@@ -1,6 +1,6 @@
 # Inventory
 
-The live harness on 2026-10-28, with the reasoning behind each piece. Paths use
+The harness this record describes, with the reasoning behind each piece. Paths use
 placeholders; the last section says what each placeholder stands for.
 
 ## Profile `web`
@@ -33,7 +33,7 @@ Location: `$DSH_HOME/profiles/web/`
 | 12 | `@deepseek-ai/dsh-experimental-session-titles-bundle` | Session titles. |
 | 13 | `@perrylink/dsh-github` | GitHub tools. |
 
-Third-party bundles are credited with repository links, licenses, and pins in [`../CREDITS.md`](../CREDITS.md).
+Third-party bundles are credited with repository links, licenses, and pins in [`../THIRD_PARTY.md`](../THIRD_PARTY.md).
 
 Rule of thumb: a package that adds tool schemas belongs in a preset; a package
 that adds UI or a preset may go in `bundles`. `patchReload: live` is on, so

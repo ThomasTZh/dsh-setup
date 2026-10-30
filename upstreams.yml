@@ -1,17 +1,16 @@
 # Third-party and external sources this setup depends on.
 #
 # This file is the registry. Nothing third-party is copied into the repository;
-# every entry points at the project's own repository, and CREDITS.md is the
-# human-readable view of the same list.
+# every entry points at the project's own repository, and THIRD_PARTY.md is
+# the human-readable view of the same list.
 #
 # kind:        dsh-bundle | dsh-plugin | skill | toolkit | mcp | library | local
 # license:     the SPDX identifier where the project states one
 # pin:         the constraint declared in the profile
-# installed:   the version resolved on 2026-10-28
+# installed:   the version resolved in the recording pass
 # repository:  the project's own GitHub URL, for credit and for browsing
 
 schema: 1
-snapshot: 2026-10-28
 harness: 0.2.1-rc.2
 
 upstreams:
@@ -113,7 +112,7 @@ upstreams:
   - name: ub-mode
     kind: skill
     repository: https://github.com/unclebob/ub-mode
-    pin: 57a8bdd28e45ed41900ace0bafa2ff76dd9ed70f (2026-10-25)
+    pin: 57a8bdd28e45ed41900ace0bafa2ff76dd9ed70f
     installed: 57a8bdd (SKILL.md only)
     license: none declared upstream
     note: >-
@@ -123,7 +122,7 @@ upstreams:
   - name: MATLAB Agentic Toolkit
     kind: toolkit
     repository: https://github.com/matlab/matlab-agentic-toolkit
-    pin: local install at ~/.matlab/agentic-toolkits/matlab (2026 snapshot)
+    pin: local install at ~/.matlab/agentic-toolkits/matlab
     installed: skills-catalog, 120 skills
     license: MathWorks BSD-3-Clause, use restricted to MathWorks products
     note: >-
