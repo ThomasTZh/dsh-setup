@@ -1,12 +1,14 @@
 # notifications
 
-The delivery layer behind `kde-notify`: it reads the notification config, finds available KDE Connect devices, sends the message to each, and logs failures. It is a module rather than a harness plugin, so it is imported by name and never mounted on its own.
+The delivery layer behind the notification bundle: it reads the notification config, finds available KDE Connect devices, sends the message to each, and logs failures. It is a module rather than a harness plugin, so it is imported by name and never mounted on its own.
 
 | | |
 |---|---|
 | File | [`notifications.mjs`](notifications.mjs) |
 | Installs to | `$LOCAL_AI/notifications.mjs` |
-| Imported by | [`../kde-notify/kde-notify.mjs`](../kde-notify/kde-notify.mjs) |
+| Imported by | [`../dsh-kde-notify/lib/index.js`](../dsh-kde-notify/lib/index.js) |
+
+Root [`notifications.mjs`](../../notifications.mjs) is a symlink to this file. The notification bundle imports `../../../notifications.mjs`, which resolves to that root link in the release tree and to `$LOCAL_AI/notifications.mjs` at the live install.
 
 ## Exports
 

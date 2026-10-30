@@ -22,16 +22,18 @@ Location: `$DSH_HOME/profiles/web/`
 | 1 | `@deepseek-ai/dsh-base` | Harness core: loader, sessions, tools, permissions. |
 | 2 | `@deepseek-ai/dsh-web-app` | The Web GUI, and the shipped presets. |
 | 3 | `@local/dsh-chat-preset` | The `chat` preset bundle. Contributes a preset, not tools. |
-| 4 | `dsh-codex` | The openai-codex provider. |
-| 5 | `@deepseek-ai/dsh-experimental-auto-review` | Review pass; kept on. |
-| 6 | `dsh-pocket` | Tunnel proxy. |
-| 7 | `@linxin666/dsh-client-ui-skill-explorer` | Skill Center. |
-| 8 | `@linxin666/dsh-usage` | Token and cost card. |
-| 9 | `dsh-better-sidebar` | Client UI with agentOpenTools. |
-| 10 | `dsh-preset-switcher` | Switch the preset after a conversation started. |
-| 11 | `dsh-prompt-enhance` | Prompt rewriting. |
-| 12 | `@deepseek-ai/dsh-experimental-session-titles-bundle` | Session titles. |
-| 13 | `@perrylink/dsh-github` | GitHub tools. |
+| 4 | `@local/dsh-mcp-auto-permission` | Adds the `workspace-write-mcp` permission preset and its approval predicate. |
+| 5 | `@local/dsh-kde-notify` | Human approval and question notifications, with auto-approved MCP suppression. |
+| 6 | `dsh-codex` | The openai-codex provider. |
+| 7 | `@deepseek-ai/dsh-experimental-auto-review` | Review pass; kept on. |
+| 8 | `dsh-pocket` | Tunnel proxy. |
+| 9 | `@linxin666/dsh-client-ui-skill-explorer` | Skill Center. |
+| 10 | `@linxin666/dsh-usage` | Token and cost card. |
+| 11 | `dsh-better-sidebar` | Client UI with agentOpenTools. |
+| 12 | `dsh-preset-switcher` | Switch the preset after a conversation started. |
+| 13 | `dsh-prompt-enhance` | Prompt rewriting. |
+| 14 | `@deepseek-ai/dsh-experimental-session-titles-bundle` | Session titles. |
+| 15 | `@perrylink/dsh-github` | GitHub tools. |
 
 Third-party bundles are credited with repository links, licenses, and pins in [`../THIRD_PARTY.md`](../THIRD_PARTY.md).
 
@@ -82,11 +84,22 @@ which is how `ub-mode` and `brainstorm` reach it.
 | `dsh-chat-preset` | `plugins/dsh-chat-preset/` | bundle | Registers the `chat` preset; `lib/guard.js` narrows each joining agent to `web_search`, `web_fetch`, `skill`. |
 | `local-ai-policy` | `plugins/local-ai-policy/policy.mjs` | first row of both presets | Per-call decision: web allowed, MATLAB tools only in `matlab`, Playwright asks, Toolkit reads denied outside `matlab`. |
 | `matlab-reference` | `plugins/matlab-reference/matlab-reference.mjs` | `matlab` only | `search_matlab_skills` and `read_matlab_skill` over the Toolkit catalogue, bounded pages, continuation offsets. |
-| `kde-notify` | `plugins/kde-notify/kde-notify.mjs` | both presets | KDE Connect notification on turn end, failure, approval request, question request. |
+| `mcp-auto-permission` | `plugins/dsh-mcp-auto-permission/` | bundle | Adds the `workspace-write-mcp` preset and claims `mcp__*` approval requests as `allowed-once`; exposes `mcpAutoPermission.autoApproves()`. |
+| `kde-notify` | `plugins/dsh-kde-notify/` | bundle | KDE Connect notification on an approval or question request; skips an approval claimed by `mcpAutoPermission`; no turn-completion or failure alerts. |
 | notification delivery | `plugins/notifications/notifications.mjs` | imported by `kde-notify` | Throttling, log at `~/.local/state/local-ai/notifications.log`, config at `~/.config/local-ai/notifications.json`. |
 
-The three file-path plugins are mounted by absolute path, so the profile patch
+The two file-path plugins are mounted by absolute path, so the profile patch
 carries `__LOCAL_AI__` placeholders rather than package names.
+
+## Permission presets
+
+The `@local/dsh-mcp-auto-permission` bundle overrides the `permission` entry with
+four presets: `read-only`, `workspace-write`, `workspace-write-mcp`, and
+`danger-full-access`. `workspace-write-mcp` keeps the `workspace-write` sandbox
+and `ask` approval policy but gives MCP tools no approval prompt. The experimental
+`auto` preset is registered at runtime by the auto-review bundle. The notifier
+asks `mcpAutoPermission` before alerting, because the approval service logs
+`approval/asked` before the auto-approval plugin claims the request.
 
 ## Skills
 
@@ -114,8 +127,13 @@ the two local presets read only their explicit roots.
 
 | Placeholder | Resolves to | Why |
 |---|---|---|
-| `__SETUP_ROOT__` | wherever this repository is cloned | The `link:` target for `dsh-chat-preset`. |
-| `__LOCAL_AI__` | `$HOME/.config/local-ai` | Policy, notification, and MATLAB reference plugins. |
+| `__SETUP_ROOT__` | wherever this repository is cloned | The `link:` target for `dsh-chat-preset`, `dsh-mcp-auto-permission`, and `dsh-kde-notify`. |
+| `__LOCAL_AI__` | `$HOME/.config/local-ai` | Policy, notification core, and MATLAB reference plugins. |
 | `__MATLAB_HOME__` | `$HOME/.matlab` | The MathWorks Agentic Toolkit catalogue. |
 | `__HOME__` | `$HOME` | Playwright MCP binary path. |
 | `__WORKSPACE__` | a directory outside this repository | The Office MCP server project. `install.sh` asks for it. |
+
+Root `notifications.mjs` is a symlink to `plugins/notifications/notifications.mjs`.
+The notification bundle imports `../../../notifications.mjs`, which resolves to
+that root link in the release tree and to `$LOCAL_AI/notifications.mjs` at the
+live install. It is a path shim, not a second copy.

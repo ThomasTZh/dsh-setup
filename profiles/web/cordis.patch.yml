@@ -549,8 +549,6 @@
                 - mcp
               toolCallTimeoutMs: 300000
               failOnStartupError: false
-    - id: kde-notify
-      name: __LOCAL_AI__/plugins/kde-notify.mjs
 - id: llm-openai-codex
   name: dsh-codex
   config:

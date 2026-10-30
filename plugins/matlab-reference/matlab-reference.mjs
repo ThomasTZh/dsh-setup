@@ -160,7 +160,6 @@ export class SkillIndex {
 }
 
 export async function apply(ctx,config) {
-  const require=createRequire(dshPackageJson());
   const {defineTool}=await import(pathToFileURL(require.resolve('@deepseek-ai/dsh-tools')).href);
   const index=new SkillIndex(resolveRoot(config));await index.refresh();
   const output={schema:{type:'string'},render:(_args,text)=>[{type:'text',text}]};

@@ -1,16 +1,16 @@
 # dsh-setup
 
-The [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) configuration this machine runs: the `web` profile, two local presets, a chat preset bundle, four plugins, two skills, and the global instructions. Recorded against harness `0.2.1-rc.2` on Linux.
+The [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) configuration this machine runs: the `web` profile, two local presets, a chat preset bundle, five plugins, two skills, and the global instructions. Recorded against harness `0.2.1-rc.2` on Linux.
 
 ## Abstract
 
 **Problem.** The harness composes its behaviour from layered bundles, a profile patch, and plugins and skills written locally. Reinstalling the harness reproduces none of the decisions taken on top of it, so the working setup exists only on the machine that made them.
 
-**Contribution.** This repository is that authored layer: the profile patch with its two preset rows, a `chat` preset bundle that cannot touch the disk, a per-call tool policy, the MATLAB catalogue tools, desktop notifications, two skills, and the global instructions. The novel parts are the policy layer, the chat guard, and the MATLAB reference plugin; the rest records loader overrides that would otherwise be rediscovered by reading a live profile.
+**Contribution.** This repository is that authored layer: the profile patch with its two preset rows, a `chat` preset bundle that cannot touch the disk, a per-call tool policy, the MATLAB catalogue tools, an MCP auto-approval permission bundle, a KDE notification bundle, two skills, and the global instructions. The novel parts are the policy layer, the chat guard, the MATLAB reference plugin, the `workspace-write-mcp` approval predicate, and the notifier's suppression of auto-approved calls; the rest records loader overrides that would otherwise be rediscovered by reading a live profile.
 
 **Approach.** Every file is a copy of what runs, grouped by owner. The tree does not mirror the install targets, so restoring copies each file to its destination and substitutes five placeholders ([Restore](#restore)). Anything obtainable from upstream is referenced by pin in [`upstreams.yml`](upstreams.yml) and [`THIRD_PARTY.md`](THIRD_PARTY.md); no upstream code is copied.
 
-**Evidence.** The composition dump succeeds and contains all three local presets, the two test suites pass, and the privacy and link checks are clean. Commands and outcomes are in [Verification](#verification).
+**Evidence.** The composition dump succeeds and contains all three local presets, the policy, MATLAB reference, MCP auto-approval, and notification plugin tests pass, and the privacy and link checks are clean. The notifier and permission mode were also confirmed on the live harness after a restart. Commands and outcomes are in [Verification](#verification).
 
 ## Composition
 
@@ -27,8 +27,9 @@ Original files first, then the records for third-party work. Install destination
 | Chat preset | [`plugins/dsh-chat-preset/`](plugins/dsh-chat-preset) | The `chat` preset and its tool guard |
 | Tool policy | [`plugins/local-ai-policy/policy.mjs`](plugins/local-ai-policy/policy.mjs) | Per-call policy for both presets |
 | MATLAB reference | [`plugins/matlab-reference/matlab-reference.mjs`](plugins/matlab-reference/matlab-reference.mjs) | Skill search and read tools |
-| Desktop notifications | [`plugins/kde-notify/kde-notify.mjs`](plugins/kde-notify/kde-notify.mjs) | KDE Connect delivery |
-| Notification core | [`plugins/notifications/notifications.mjs`](plugins/notifications/notifications.mjs) | Throttling and logging |
+| MCP permission | [`plugins/dsh-mcp-auto-permission/`](plugins/dsh-mcp-auto-permission) | The `workspace-write-mcp` preset and its approval predicate |
+| Desktop notifications | [`plugins/dsh-kde-notify/`](plugins/dsh-kde-notify) | Approval and question alerts, with auto-approved MCP suppression |
+| Notification core | [`plugins/notifications/notifications.mjs`](plugins/notifications/notifications.mjs) | KDE Connect delivery, throttling, and logging. Root `notifications.mjs` links here for the notification bundle's installed-path import |
 | Brainstorm | [`skills/brainstorm/`](skills/brainstorm) | One skill |
 | pub-gh | [`skills/pub-gh/`](skills/pub-gh) | Release skill and two templates |
 | Global instructions | [`AGENTS.md`](AGENTS.md) | Instructions for every session |
@@ -45,9 +46,9 @@ Original files first, then the records for third-party work. Install destination
 
 ### The profile
 
-Thirteen bundles load in the `web` profile: four shipped with the harness, one local (`@local/dsh-chat-preset`), and eight third-party packages ([2]–[8]). Pins live in [`profiles/web/package.json`](profiles/web/package.json).
+Fifteen bundles load in the `web` profile: four shipped with the harness, three local (`@local/dsh-chat-preset`, `@local/dsh-mcp-auto-permission`, `@local/dsh-kde-notify`), and eight third-party packages ([2]–[8]). Pins live in [`profiles/web/package.json`](profiles/web/package.json).
 
-The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max` as the default model, three permission presets, the local llama.cpp provider, theme and transcript settings, session logging off, the unused UI panels disabled, and the presets below. [`docs/inventory.md`](docs/inventory.md) tabulates every override.
+The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max` as the default model, the local llama.cpp provider, theme and transcript settings, session logging off, the unused UI panels disabled, and the presets below. The `@local/dsh-mcp-auto-permission` bundle adds the four permission presets: `read-only`, `workspace-write`, `workspace-write-mcp`, and `danger-full-access`; the experimental `auto` preset is registered at runtime by the auto-review bundle. [`docs/inventory.md`](docs/inventory.md) tabulates every override.
 
 ### Presets
 
@@ -59,7 +60,7 @@ The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max
 
 `general` and `matlab` both mount `skill-filesystem` with `includeDefaultRoots: false` and an explicit `customSkillDirs` list, so their catalogue is exactly what those roots contain. `chat` uses the default roots, which is how `brainstorm` and `pub-gh` reach it.
 
-### Three pieces worth reading
+### Five pieces worth reading
 
 **1. A policy layer per preset.** [`policy.mjs`](plugins/local-ai-policy/policy.mjs) hooks `tools/execute` and decides per call: web tools always allowed, MATLAB tools and official Toolkit skills only in the `matlab` preset, Playwright asks for approval, Toolkit reads denied from any other preset. It is one file, injected as `local-ai-policy` at the top of both presets, and it is why `general` cannot quietly fall back to MATLAB.
 
@@ -67,7 +68,9 @@ The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max
 
 **3. MATLAB skills without a catalogue dump.** [`matlab-reference.mjs`](plugins/matlab-reference/matlab-reference.mjs) indexes the official MathWorks Toolkit catalogue and exposes `search_matlab_skills` and `read_matlab_skill` with bounded pages and continuation offsets. The `matlab` preset mounts it instead of a 120-entry skill root; `general` never sees it.
 
-Notifications run through [`kde-notify.mjs`](plugins/kde-notify/kde-notify.mjs) and [`notifications.mjs`](plugins/notifications/notifications.mjs): KDE Connect on turn end, failure, approval request, and question request.
+**4. MCP auto-approval as a permission preset.** [`plugins/dsh-mcp-auto-permission`](plugins/dsh-mcp-auto-permission) adds `workspace-write-mcp` with the same sandbox and approval knobs as `workspace-write`, claims `mcp__*` approval requests as `allowed-once`, and exposes `mcpAutoPermission.autoApproves(session, toolName)` so another plugin can tell an auto-approved call from a real prompt.
+
+**5. Notifications only for real human input.** [`plugins/dsh-kde-notify`](plugins/dsh-kde-notify) alerts on approval and question requests. It asks `mcpAutoPermission` before an approval alert and suppresses the alert when the MCP plugin will claim the request. Turn completion, failure, blocked, and output-limit events no longer notify.
 
 ### Requirements
 
@@ -92,8 +95,9 @@ mkdir -p "$DSH_HOME/profiles/web" "$DSH_HOME/local-plugins" \
          "$LOCAL_AI/plugins" "$LOCAL_AI/skills/on-request" "$HOME/.agents/skills"
 cp profiles/web/cordis.patch.yml profiles/web/package.json "$DSH_HOME/profiles/web/"
 cp plugins/local-ai-policy/policy.mjs plugins/notifications/notifications.mjs "$LOCAL_AI/"
-cp plugins/kde-notify/kde-notify.mjs plugins/matlab-reference/matlab-reference.mjs "$LOCAL_AI/plugins/"
-cp -r plugins/dsh-chat-preset "$DSH_HOME/local-plugins/"
+cp plugins/matlab-reference/matlab-reference.mjs "$LOCAL_AI/plugins/"
+cp -r plugins/dsh-chat-preset plugins/dsh-mcp-auto-permission "$DSH_HOME/local-plugins/"
+cp -r plugins/dsh-kde-notify "$LOCAL_AI/plugins/"
 cp -r skills/brainstorm skills/pub-gh "$HOME/.agents/skills/"
 ln -sfn "$HOME/.agents/skills/brainstorm" "$LOCAL_AI/skills/on-request/brainstorm"
 ln -sfn "$HOME/.agents/skills/pub-gh" "$LOCAL_AI/skills/on-request/pub-gh"
@@ -104,8 +108,9 @@ Then replace the placeholders in `cordis.patch.yml` and `package.json` before st
 
 ```sh
 cd "$DSH_HOME/profiles/web" && pnpm install
-dsh --profile web --dump-config | grep -q "id: preset-chat"   # chat preset present
-dsh web                                                       # restart to load the bundle
+dsh --profile web --dump-config | grep -q "id: preset-chat"       # chat preset present
+dsh --profile web --dump-config | grep -q "workspace-write-mcp"  # permission preset present
+dsh web                                                           # restart to load the bundle
 ```
 
 ## Verification
@@ -114,22 +119,26 @@ Run against this tree and the live harness on the recorded machine:
 
 | Check | Command | Result |
 |---|---|---|
-| YAML parses | `python3 -c 'import yaml,sys; yaml.safe_load(open(sys.argv[1]))'` on all three tracked `.yml` files | pass, 3/3 |
-| JavaScript parses | `node --check` on the four `.mjs` modules and `lib/guard.js` | pass, 5/5 |
+| YAML parses | `python3 -c 'import yaml,sys; yaml.safe_load(open(sys.argv[1]))'` on every tracked `.yml` file | pass |
+| JavaScript parses | `node --check` on every tracked `.mjs` module and `lib/guard.js` | pass |
 | Tool policy | `node --test plugins/local-ai-policy/policy.test.mjs` | pass, 5 tests |
 | MATLAB reference | `DSH_PACKAGE_JSON=… node --test plugins/matlab-reference/matlab-reference.test.mjs` | pass, 2 tests |
-| Restore | the block above, run verbatim with an empty `HOME`, `DSH_HOME`, and `LOCAL_AI` | pass: every file, bundle, and symlink arrived and resolved |
-| Composition | `dsh --profile web --dump-config` | exit 0, 2018 lines, `preset-chat`, `preset-general`, and `preset-matlab` present, generated `cordis.yml` unchanged |
+| MCP auto-approval | `node --test plugins/dsh-mcp-auto-permission/test/index.test.mjs` | pass, 6 tests |
+| KDE notification | `node --test plugins/dsh-kde-notify/test/index.test.mjs` | pass, 5 tests |
+| Restore layout | copy block with temporary `HOME`, `DSH_HOME`, and `LOCAL_AI` | pass: every file and root symlink arrived; `pnpm install` and `dsh` not run in the temporary tree |
+| Composition | `dsh --profile web --dump-config` on the live harness | exit 0, `preset-chat`, `preset-general`, `preset-matlab`, and `workspace-write-mcp` present |
+| Live mode | user check after restart | pass: `workspace-write-mcp` MCP calls run; non-MCP approvals still ask |
+| Live notification | user check after restart | pass: no alert for auto-approved MCP, alert for a non-MCP approval and a user question, no completion alert |
 | Links | every relative link in `README.md` resolved | pass |
 | Privacy | `grep` for absolute home paths and secret-shaped strings across tracked files | clean |
 
-**Not tested:** a `pnpm install` from an empty `node_modules`, restarting the `web` server with the restored profile, and the four external MCP servers, which are not in this repository.
+**Not tested:** `pnpm install` from an empty `node_modules`, a full `dsh web` restart from the restored tree, and the four external MCP servers, which are not in this repository.
 
 **Observed warning.** The composition dump reports `patch: entry "web-ui-…" not found` for seven UI rows (`web-ui-pet`, `web-ui-liangshen`, `web-ui-remote-bridge`, `web-ui-remote-web-ui`, `web-ui-task-board`, `web-ui-task-board-github`, `web-ui-skill-explorer`). Those ids are absent from the composed tree, so the six disables and the one enable have no effect; the Skill Center is delivered by the `@linxin666/dsh-client-ui-skill-explorer` bundle listed in the profile. The patch is left as recorded rather than changed to match, because the restore target is the configuration that runs.
 
 ## Conclusion
 
-The repository supports restoring this exact harness composition on a comparable Linux host with the harness and the pinned packages installed. It does not restore the external MCP servers, the generated agent presets, or the third-party skill roots, and the tests cover the policy and the MATLAB reference tools rather than the whole loader.
+The repository supports restoring this exact harness composition on a comparable Linux host with the harness and the pinned packages installed. It does not restore the external MCP servers, the generated agent presets, or the third-party skill roots. The tests cover the policy, the MATLAB reference tools, the MCP auto-approval predicate, and the notifier's approval handling rather than the whole loader. The live checks confirm the two new behaviours on this machine.
 
 ## Acknowledgements
 

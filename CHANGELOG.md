@@ -2,6 +2,16 @@
 
 Newest first, ordered rather than dated. The repository records the configuration that runs; a calendar date on the record would make it read as a snapshot that ages, so entries describe what changed instead.
 
+## MCP auto-approval and notification bundles
+
+- Added `plugins/dsh-mcp-auto-permission`: a bundle that adds the `workspace-write-mcp` permission preset, claims `mcp__*` approval requests as `allowed-once`, and exposes `mcpAutoPermission.autoApproves()` for other plugins.
+- Rebuilt desktop notifications as `plugins/dsh-kde-notify`: alerts only on approval and question requests, skips an approval claimed by `mcpAutoPermission`, and no longer alerts on turn completion, failure, capped output, or blocked work.
+- Removed the old `plugins/kde-notify/` file plugin and its profile row. `manager.py` and `scripts/configure_notifications.py` now remove legacy `kde-notify` rows instead of adding one.
+- Moved the notification core to a root `notifications.mjs` symlink so the notification bundle's installed-path import resolves in the release tree without a second copy.
+- `matlab-reference` now derives the harness package from `DSH_PACKAGE_JSON` or the launcher path and contains no hardcoded home directory.
+- The `web` profile now loads fifteen bundles: four shipped, three local, and eight third-party.
+- Added tests for the MCP auto-approval predicate and the notification suppression path; the live harness confirmed the mode and notification behavior after restart.
+
 ## pub-gh house style
 
 - `skills/pub-gh` gained a house-style section summarising how this publisher wants a release read: local work and verification before any GitHub operation, no snapshot dates, README in release shape, name/path/contents tables with original files first, one directory and one README per component, original-only trees with `THIRD_PARTY.md` credit and a root MIT `LICENSE`, byte-identical installed copies, and evidence instead of claims.
