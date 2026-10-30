@@ -30,7 +30,7 @@ The approval service appends `approval/asked` before dispatching `approval/reque
 
 The package is installed at `~/.config/local-ai/plugins/dsh-kde-notify`, linked from this release tree as `__SETUP_ROOT__/plugins/dsh-kde-notify`, and registered in the web profile as a bundle and dependency. The plugin imports `notifications.mjs` through `../../../notifications.mjs`, which resolves to the root link in this tree and to `~/.config/local-ai/notifications.mjs` at the live install.
 
-The old profile-patch insertion of `kde-notify` is removed. `manager.py` and `configure_notifications.py` must not re-add that row; the bundle owns the DSH plugin composition.
+The old profile-patch insertion of `kde-notify` is removed; the bundle owns the DSH plugin composition.
 
 ## Limitations
 

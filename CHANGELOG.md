@@ -6,7 +6,7 @@ Newest first, ordered rather than dated. The repository records the configuratio
 
 - Added `plugins/dsh-mcp-auto-permission`: a bundle that adds the `workspace-write-mcp` permission preset, claims `mcp__*` approval requests as `allowed-once`, and exposes `mcpAutoPermission.autoApproves()` for other plugins.
 - Rebuilt desktop notifications as `plugins/dsh-kde-notify`: alerts only on approval and question requests, skips an approval claimed by `mcpAutoPermission`, and no longer alerts on turn completion, failure, capped output, or blocked work.
-- Removed the old `plugins/kde-notify/` file plugin and its profile row. `manager.py` and `scripts/configure_notifications.py` now remove legacy `kde-notify` rows instead of adding one.
+- Removed the old `plugins/kde-notify/` file plugin and its profile row; the notification bundle now owns the host registration.
 - Moved the notification core to a root `notifications.mjs` symlink so the notification bundle's installed-path import resolves in the release tree without a second copy.
 - `matlab-reference` now derives the harness package from `DSH_PACKAGE_JSON` or the launcher path and contains no hardcoded home directory.
 - The `web` profile now loads fifteen bundles: four shipped, three local, and eight third-party.
