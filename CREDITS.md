@@ -32,6 +32,6 @@ Third-party work this setup mounts, installs, or reads. Nothing in this list is 
 
 ## Not third-party
 
-The rest of this repository is original to the setup: `plugins/dsh-chat-preset`, `local-ai/policy.mjs`, `local-ai/plugins/matlab-reference.mjs`, `local-ai/plugins/kde-notify.mjs`, `local-ai/notifications.mjs`, `skills/brainstorm`, the two presets in `profiles/web/cordis.patch.yml`, and `AGENTS.md`.
+The rest of this repository is original to the setup: `plugins/dsh-chat-preset`, `local-ai/policy.mjs`, `local-ai/plugins/matlab-reference.mjs`, `local-ai/plugins/kde-notify.mjs`, `local-ai/notifications.mjs`, `skills/brainstorm`, `skills/pub-gh`, the two presets in `profiles/web/cordis.patch.yml`, and `AGENTS.md`.
 
 Three components the presets mount are original but not published here, so they carry no upstream credit: the local web gateway (`__LOCAL_AI__/web-gateway.py`), `__LOCAL_AI__/matlab-server`, and the Office MCP project at `__HOME__/Documents/__WORKSPACE__/officeProjects/setup/office`.

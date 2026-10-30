@@ -2,6 +2,12 @@
 
 Dates are the day the change landed on this machine. Newest first.
 
+## 2026-10-30
+
+Added `skills/pub-gh`, a skill for preparing and publishing a minimal, reproducible GitHub release: separate original work from modified and unmodified third-party code, run the privacy and licence gates, write the academic README, verify the tree, then push or open a pull request. It ships with `assets/README.template.md` and `assets/THIRD_PARTY.template.md`, which the workflow asks the agent to fill in.
+
+Installed at `~/.agents/skills/pub-gh` and symlinked into `~/.config/local-ai/skills/on-request/pub-gh`, so both local presets and the `chat` preset see it. Files are byte-identical to the installed copies. Kept the `compatibility` front-matter key even though the DSH skill provider ignores it, so the repository matches what is installed.
+
 ## 2026-10-28
 
 Replaced the previous record, which described a Windows host with four bundles, with the harness as it runs here on `0.2.1-rc.2`.

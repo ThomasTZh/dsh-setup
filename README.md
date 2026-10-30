@@ -1,6 +1,6 @@
 # dsh-setup
 
-The [DeepSeek Harness](https://github.com/deepseek-ai) configuration this machine runs: the `web` profile, two local presets, a chat preset bundle, four plugins, and the global instructions.
+The [DeepSeek Harness](https://github.com/deepseek-ai) configuration this machine runs: the `web` profile, two local presets, a chat preset bundle, four plugins, two skills, and the global instructions.
 
 Snapshot: 2026-10-28, DeepSeek Harness `0.2.1-rc.2`, Linux.
 
@@ -20,6 +20,7 @@ Only original work is published here. Every file in this repository was written 
 | [`local-ai/plugins/kde-notify.mjs`](local-ai/plugins/kde-notify.mjs) | `$LOCAL_AI/plugins/` | Desktop notifications |
 | [`local-ai/notifications.mjs`](local-ai/notifications.mjs) | `$LOCAL_AI/` | Delivery, throttling, and logging for the above |
 | [`skills/brainstorm/`](skills/brainstorm) | `$HOME/.agents/skills/` | One skill, symlinked into the on-request root |
+| [`skills/pub-gh/`](skills/pub-gh) | `$HOME/.agents/skills/` | The GitHub release skill and its two templates, symlinked the same way |
 | [`AGENTS.md`](AGENTS.md) | `$DSH_HOME/` | Global instructions |
 | [`upstreams.yml`](upstreams.yml) | not installed | Source registry: pins, licenses, what is not here |
 | [`docs/inventory.md`](docs/inventory.md) | not installed | The live composition and the reasoning behind it |
@@ -71,7 +72,9 @@ cp local-ai/policy.mjs local-ai/notifications.mjs "$LOCAL_AI/"
 cp local-ai/plugins/kde-notify.mjs local-ai/plugins/matlab-reference.mjs "$LOCAL_AI/plugins/"
 cp -r plugins/dsh-chat-preset "$DSH_HOME/local-plugins/"
 cp -r skills/brainstorm "$HOME/.agents/skills/"
+cp -r skills/pub-gh "$HOME/.agents/skills/"
 ln -sfn "$HOME/.agents/skills/brainstorm" "$LOCAL_AI/skills/on-request/brainstorm"
+ln -sfn "$HOME/.agents/skills/pub-gh" "$LOCAL_AI/skills/on-request/pub-gh"
 cp AGENTS.md "$DSH_HOME/AGENTS.md"
 ```
 

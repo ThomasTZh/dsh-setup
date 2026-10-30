@@ -93,11 +93,12 @@ carries `__LOCAL_AI__` placeholders rather than package names.
 | Skill | Owner | Where it lives |
 |---|---|---|
 | `brainstorm` | this repository | `~/.agents/skills/brainstorm`, symlinked into `~/.config/local-ai/skills/on-request` |
+| `pub-gh` | this repository | `~/.agents/skills/pub-gh` with two templates under `assets/`, symlinked into `~/.config/local-ai/skills/on-request` |
 | `ub-mode` | [unclebob/ub-mode](https://github.com/unclebob/ub-mode) | installed under `~/.agents/skills`, not copied here |
 | MATLAB Toolkit skills | MathWorks | 120 symlinks from `__MATLAB_HOME__/agentic-toolkits/matlab/skills-catalog` into `~/.agents/skills`; `matlab-core` is also scanned directly by the `matlab` preset |
 
 Global skill roots exist at `~/.dsh/skills` (absent on this machine) and
-`~/.agents/skills` (present, 122 entries). The `chat` preset reads the defaults;
+`~/.agents/skills` (present, 123 entries). The `chat` preset reads the defaults;
 the two local presets read only their explicit roots.
 
 ## Not tracked, on purpose
