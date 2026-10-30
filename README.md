@@ -125,7 +125,7 @@ Run against this tree and the live harness on the recorded machine:
 | MATLAB reference | `DSH_PACKAGE_JSON=… node --test plugins/matlab-reference/matlab-reference.test.mjs` | pass, 2 tests |
 | MCP auto-approval | `node --test plugins/dsh-mcp-auto-permission/test/index.test.mjs` | pass, 6 tests |
 | KDE notification | `node --test plugins/dsh-kde-notify/test/index.test.mjs` | pass, 5 tests |
-| Restore layout | copy block with temporary `HOME`, `DSH_HOME`, and `LOCAL_AI` | pass: every file and root symlink arrived; `pnpm install` and `dsh` not run in the temporary tree |
+| Restore layout | copy block with temporary `HOME`, `DSH_HOME`, and `LOCAL_AI` | pass: every copied file and package tree arrived; the root `notifications.mjs` link exists in the release tree; `pnpm install` and `dsh` not run in the temporary tree |
 | Composition | `dsh --profile web --dump-config` on the live harness | exit 0, `preset-chat`, `preset-general`, `preset-matlab`, and `workspace-write-mcp` present |
 | Live mode | user check after restart | pass: `workspace-write-mcp` MCP calls run; non-MCP approvals still ask |
 | Live notification | user check after restart | pass: no alert for auto-approved MCP, alert for a non-MCP approval and a user question, no completion alert |
