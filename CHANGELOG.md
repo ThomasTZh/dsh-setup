@@ -2,6 +2,13 @@
 
 Newest first, ordered rather than dated. The repository records the configuration that runs; a calendar date on the record would make it read as a snapshot that ages, so entries describe what changed instead.
 
+## Plugins grouped by owner
+
+- Every plugin now has its own directory under `plugins/`, each with a README: `dsh-chat-preset`, `local-ai-policy`, `kde-notify`, `notifications`, `matlab-reference`.
+- `local-ai/` is gone. `policy.mjs`, `notifications.mjs`, `kde-notify.mjs`, and `matlab-reference.mjs` moved with their tests into those directories.
+- Files stay byte-identical to the installed copies, so the tree no longer mirrors the install targets: restore copies each file from its directory to `$LOCAL_AI/` or `$LOCAL_AI/plugins/`. `kde-notify.mjs` keeps `import '../notifications.mjs'`, which resolves only at the install location.
+- README, `docs/inventory.md`, `THIRD_PARTY.md`, and the verification commands follow the new paths.
+
 ## Rewritten as a release record
 
 - README rebuilt to the release structure: Abstract, Composition, Verification, Conclusion, Acknowledgements, References. It now states the problem the repository answers, the restore procedure, and the checks with their outcomes.

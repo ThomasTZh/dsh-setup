@@ -80,10 +80,10 @@ which is how `ub-mode` and `brainstorm` reach it.
 | Plugin | File | Mounted | Behaviour |
 |---|---|---|---|
 | `dsh-chat-preset` | `plugins/dsh-chat-preset/` | bundle | Registers the `chat` preset; `lib/guard.js` narrows each joining agent to `web_search`, `web_fetch`, `skill`. |
-| `local-ai-policy` | `local-ai/policy.mjs` | first row of both presets | Per-call decision: web allowed, MATLAB tools only in `matlab`, Playwright asks, Toolkit reads denied outside `matlab`. |
-| `matlab-reference` | `local-ai/plugins/matlab-reference.mjs` | `matlab` only | `search_matlab_skills` and `read_matlab_skill` over the Toolkit catalogue, bounded pages, continuation offsets. |
-| `kde-notify` | `local-ai/plugins/kde-notify.mjs` | both presets | KDE Connect notification on turn end, failure, approval request, question request. |
-| notification delivery | `local-ai/notifications.mjs` | imported by `kde-notify` | Throttling, log at `~/.local/state/local-ai/notifications.log`, config at `~/.config/local-ai/notifications.json`. |
+| `local-ai-policy` | `plugins/local-ai-policy/policy.mjs` | first row of both presets | Per-call decision: web allowed, MATLAB tools only in `matlab`, Playwright asks, Toolkit reads denied outside `matlab`. |
+| `matlab-reference` | `plugins/matlab-reference/matlab-reference.mjs` | `matlab` only | `search_matlab_skills` and `read_matlab_skill` over the Toolkit catalogue, bounded pages, continuation offsets. |
+| `kde-notify` | `plugins/kde-notify/kde-notify.mjs` | both presets | KDE Connect notification on turn end, failure, approval request, question request. |
+| notification delivery | `plugins/notifications/notifications.mjs` | imported by `kde-notify` | Throttling, log at `~/.local/state/local-ai/notifications.log`, config at `~/.config/local-ai/notifications.json`. |
 
 The three file-path plugins are mounted by absolute path, so the profile patch
 carries `__LOCAL_AI__` placeholders rather than package names.

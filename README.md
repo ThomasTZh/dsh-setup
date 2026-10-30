@@ -8,7 +8,7 @@ The [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) configur
 
 **Contribution.** This repository is that authored layer: the profile patch with its two preset rows, a `chat` preset bundle that cannot touch the disk, a per-call tool policy, the MATLAB catalogue tools, desktop notifications, two skills, and the global instructions. The novel parts are the policy layer, the chat guard, and the MATLAB reference plugin; the rest records loader overrides that would otherwise be rediscovered by reading a live profile.
 
-**Approach.** Every file is a copy of what runs, and the tree mirrors the install targets, so restoring is a copy plus five placeholder substitutions ([Restore](#restore)). Anything obtainable from upstream is referenced by pin in [`upstreams.yml`](upstreams.yml) and [`THIRD_PARTY.md`](THIRD_PARTY.md); no upstream code is copied.
+**Approach.** Every file is a copy of what runs, grouped by owner. The tree does not mirror the install targets, so restoring copies each file to its destination and substitutes five placeholders ([Restore](#restore)). Anything obtainable from upstream is referenced by pin in [`upstreams.yml`](upstreams.yml) and [`THIRD_PARTY.md`](THIRD_PARTY.md); no upstream code is copied.
 
 **Evidence.** The composition dump succeeds and contains all three local presets, the two test suites pass, and the privacy and link checks are clean. Commands and outcomes are in [Verification](#verification).
 
@@ -25,10 +25,10 @@ Original files first, then the records for third-party work. Install destination
 | Profile patch | [`profiles/web/cordis.patch.yml`](profiles/web/cordis.patch.yml) | Loader overrides and both local presets |
 | Profile dependencies | [`profiles/web/package.json`](profiles/web/package.json) | Dependencies and the bundle list |
 | Chat preset | [`plugins/dsh-chat-preset/`](plugins/dsh-chat-preset) | The `chat` preset and its tool guard |
-| Tool policy | [`local-ai/policy.mjs`](local-ai/policy.mjs) | Per-call policy for both presets |
-| MATLAB reference | [`local-ai/plugins/matlab-reference.mjs`](local-ai/plugins/matlab-reference.mjs) | Skill search and read tools |
-| Desktop notifications | [`local-ai/plugins/kde-notify.mjs`](local-ai/plugins/kde-notify.mjs) | KDE Connect delivery |
-| Notification core | [`local-ai/notifications.mjs`](local-ai/notifications.mjs) | Throttling and logging |
+| Tool policy | [`plugins/local-ai-policy/policy.mjs`](plugins/local-ai-policy/policy.mjs) | Per-call policy for both presets |
+| MATLAB reference | [`plugins/matlab-reference/matlab-reference.mjs`](plugins/matlab-reference/matlab-reference.mjs) | Skill search and read tools |
+| Desktop notifications | [`plugins/kde-notify/kde-notify.mjs`](plugins/kde-notify/kde-notify.mjs) | KDE Connect delivery |
+| Notification core | [`plugins/notifications/notifications.mjs`](plugins/notifications/notifications.mjs) | Throttling and logging |
 | Brainstorm | [`skills/brainstorm/`](skills/brainstorm) | One skill |
 | pub-gh | [`skills/pub-gh/`](skills/pub-gh) | Release skill and two templates |
 | Global instructions | [`AGENTS.md`](AGENTS.md) | Instructions for every session |
@@ -61,13 +61,13 @@ The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max
 
 ### Three pieces worth reading
 
-**1. A policy layer per preset.** [`policy.mjs`](local-ai/policy.mjs) hooks `tools/execute` and decides per call: web tools always allowed, MATLAB tools and official Toolkit skills only in the `matlab` preset, Playwright asks for approval, Toolkit reads denied from any other preset. It is one file, injected as `local-ai-policy` at the top of both presets, and it is why `general` cannot quietly fall back to MATLAB.
+**1. A policy layer per preset.** [`policy.mjs`](plugins/local-ai-policy/policy.mjs) hooks `tools/execute` and decides per call: web tools always allowed, MATLAB tools and official Toolkit skills only in the `matlab` preset, Playwright asks for approval, Toolkit reads denied from any other preset. It is one file, injected as `local-ai-policy` at the top of both presets, and it is why `general` cannot quietly fall back to MATLAB.
 
 **2. A chat preset that cannot touch the disk.** [`plugins/dsh-chat-preset`](plugins/dsh-chat-preset) registers a `chat` preset holding a persona, `AGENTS.md`, web tools, skill loading, and compaction, and nothing else. [`lib/guard.js`](plugins/dsh-chat-preset/lib/guard.js) narrows each joining agent to `web_search`, `web_fetch`, and `skill`, reading the allow list from the agent's own visible tools so a search-only configuration still works.
 
-**3. MATLAB skills without a catalogue dump.** [`matlab-reference.mjs`](local-ai/plugins/matlab-reference.mjs) indexes the official MathWorks Toolkit catalogue and exposes `search_matlab_skills` and `read_matlab_skill` with bounded pages and continuation offsets. The `matlab` preset mounts it instead of a 120-entry skill root; `general` never sees it.
+**3. MATLAB skills without a catalogue dump.** [`matlab-reference.mjs`](plugins/matlab-reference/matlab-reference.mjs) indexes the official MathWorks Toolkit catalogue and exposes `search_matlab_skills` and `read_matlab_skill` with bounded pages and continuation offsets. The `matlab` preset mounts it instead of a 120-entry skill root; `general` never sees it.
 
-Notifications run through [`kde-notify.mjs`](local-ai/plugins/kde-notify.mjs) and [`notifications.mjs`](local-ai/notifications.mjs): KDE Connect on turn end, failure, approval request, and question request.
+Notifications run through [`kde-notify.mjs`](plugins/kde-notify/kde-notify.mjs) and [`notifications.mjs`](plugins/notifications/notifications.mjs): KDE Connect on turn end, failure, approval request, and question request.
 
 ### Requirements
 
@@ -91,8 +91,8 @@ LOCAL_AI=${LOCAL_AI:-$HOME/.config/local-ai}
 mkdir -p "$DSH_HOME/profiles/web" "$DSH_HOME/local-plugins" \
          "$LOCAL_AI/plugins" "$LOCAL_AI/skills/on-request" "$HOME/.agents/skills"
 cp profiles/web/cordis.patch.yml profiles/web/package.json "$DSH_HOME/profiles/web/"
-cp local-ai/policy.mjs local-ai/notifications.mjs "$LOCAL_AI/"
-cp local-ai/plugins/kde-notify.mjs local-ai/plugins/matlab-reference.mjs "$LOCAL_AI/plugins/"
+cp plugins/local-ai-policy/policy.mjs plugins/notifications/notifications.mjs "$LOCAL_AI/"
+cp plugins/kde-notify/kde-notify.mjs plugins/matlab-reference/matlab-reference.mjs "$LOCAL_AI/plugins/"
 cp -r plugins/dsh-chat-preset "$DSH_HOME/local-plugins/"
 cp -r skills/brainstorm skills/pub-gh "$HOME/.agents/skills/"
 ln -sfn "$HOME/.agents/skills/brainstorm" "$LOCAL_AI/skills/on-request/brainstorm"
@@ -116,8 +116,8 @@ Run against this tree and the live harness on the recorded machine:
 |---|---|---|
 | YAML parses | `python3 -c 'import yaml,sys; yaml.safe_load(open(sys.argv[1]))'` on all three tracked `.yml` files | pass, 3/3 |
 | JavaScript parses | `node --check` on the four `.mjs` modules and `lib/guard.js` | pass, 5/5 |
-| Tool policy | `node --test local-ai/policy.test.mjs` | pass, 5 tests |
-| MATLAB reference | `DSH_PACKAGE_JSON=… node --test local-ai/plugins/matlab-reference.test.mjs` | pass, 2 tests |
+| Tool policy | `node --test plugins/local-ai-policy/policy.test.mjs` | pass, 5 tests |
+| MATLAB reference | `DSH_PACKAGE_JSON=… node --test plugins/matlab-reference/matlab-reference.test.mjs` | pass, 2 tests |
 | Restore | the block above, run verbatim with an empty `HOME`, `DSH_HOME`, and `LOCAL_AI` | pass: every file, bundle, and symlink arrived and resolved |
 | Composition | `dsh --profile web --dump-config` | exit 0, 2018 lines, `preset-chat`, `preset-general`, and `preset-matlab` present, generated `cordis.yml` unchanged |
 | Links | every relative link in `README.md` resolved | pass |

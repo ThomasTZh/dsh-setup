@@ -40,7 +40,7 @@ Install each component from its own project or package manager at the pin in [`u
 
 ## Copyright and licence compliance
 
-- **Original files:** the MIT [`LICENSE`](LICENSE) covers `plugins/dsh-chat-preset`, `local-ai/policy.mjs`, `local-ai/notifications.mjs`, `local-ai/plugins/matlab-reference.mjs`, `local-ai/plugins/kde-notify.mjs`, `skills/brainstorm`, `skills/pub-gh`, the two presets in `profiles/web/cordis.patch.yml`, `AGENTS.md`, and the documentation files in this repository.
+- **Original files:** the MIT [`LICENSE`](LICENSE) covers `plugins/dsh-chat-preset`, `plugins/local-ai-policy`, `plugins/notifications`, `plugins/kde-notify`, `plugins/matlab-reference`, `skills/brainstorm`, `skills/pub-gh`, the two presets in `profiles/web/cordis.patch.yml`, `AGENTS.md`, and the documentation files in this repository.
 - **Upstream notices:** they stay with their own projects, because no upstream file is present here. No third-party licence text needs to be redistributed for that reason.
 - **Restricted components:** the MathWorks toolkit is licensed for use with MathWorks products; `ub-mode` declares no licence upstream. Both are installed separately and are neither copied nor relicensed here.
 - **Unresolved:** none. If a future change copies an upstream file, its project, exact revision, retained notice, and licence must be added to this file before the change is published.
