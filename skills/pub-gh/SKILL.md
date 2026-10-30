@@ -22,6 +22,19 @@ Release **the smallest legally redistributable set of files that enables an inde
 6. **Accurate documentation:** never invent results, citations, URLs, license terms, commands, platform support, or test success. Clearly mark missing evidence or inaccessible hardware.
 7. **Git safety:** never copy the workspace `.git` directory into a new public release. Never push all workspace files, force-push, rewrite history, change repository visibility, delete public files, or overwrite unrelated remote work without separate explicit approval.
 
+## House style
+
+The publisher's defaults, learned from the `dsh-setup` repository. Apply them unless the user overrides them.
+
+- **Local first, GitHub second.** Build and verify the tree in a local checkout. The first remote operation is the push or pull request, after the checks pass and the user approves it. Never publish in order to find out whether it works.
+- **No snapshot dates.** No record date, no `snapshot:` field, no "as of" wording. Say what the release is and pin versions and commits; order a changelog newest-first rather than dating it.
+- **README in release shape.** Abstract, Composition (or Methods), Verification (or Results), Conclusion, Acknowledgements, References. One row per check that actually ran, then the untested items stated plainly.
+- **Tables say name, path, contents.** Original files first, third-party records second. Do not repeat install destinations in the layout; the restore or install block owns them.
+- **One directory per component.** Every plugin, skill, and tool gets its own folder and its own README: what it does, how it is wired, its configuration, where it installs, and how to run its tests.
+- **Original only.** No upstream code, text, or binary in the tree. Credit each upstream project in `THIRD_PARTY.md` with its project, revision, licence, and what changed, even when nothing changed. Add a root `LICENSE`, MIT by default, covering only the original files and listing them.
+- **Copies stay byte-identical.** A file installed elsewhere is committed exactly as it runs, even when that stops the tree from mirroring the install locations; the restore block maps repository path to destination.
+- **Evidence, not claims.** Run the checks, quote the outcomes, and mark anything unrun as not tested.
+
 ## Workflow
 
 ### 1. Inspect the workspace and the intended GitHub target
@@ -84,7 +97,7 @@ Perform **all** checks before committing or uploading:
 
 ### 5. Write academic-style documentation
 
-Use [assets/README.template.md](assets/README.template.md) as a starting point. Keep the prose brief, precise, and third-person or neutral; use short paragraphs, short bullets, and a small table where helpful. Preserve this structure:
+Use [assets/README.template.md](assets/README.template.md) as a starting point, following the [House style](#house-style) shape. Keep the prose brief, precise, and third-person or neutral; use short paragraphs, short bullets, and a small table where helpful. Preserve this structure:
 
 1. **Abstract:** problem, original contribution, method, intended use, one evidence-backed result if available.
 2. **Methods and Materials:** original vs upstream components, algorithm overview, hardware/software/OS/driver versions, installation, build, setup, exact reproduction commands, inputs/outputs, expected outputs, and limitations.

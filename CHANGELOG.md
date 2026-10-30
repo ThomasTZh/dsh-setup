@@ -2,6 +2,11 @@
 
 Newest first, ordered rather than dated. The repository records the configuration that runs; a calendar date on the record would make it read as a snapshot that ages, so entries describe what changed instead.
 
+## pub-gh house style
+
+- `skills/pub-gh` gained a house-style section summarising how this publisher wants a release read: local work and verification before any GitHub operation, no snapshot dates, README in release shape, name/path/contents tables with original files first, one directory and one README per component, original-only trees with `THIRD_PARTY.md` credit and a root MIT `LICENSE`, byte-identical installed copies, and evidence instead of claims.
+- Step 5 of the skill now points at that section for the README shape.
+
 ## Plugins grouped by owner
 
 - Every plugin now has its own directory under `plugins/`, each with a README: `dsh-chat-preset`, `local-ai-policy`, `kde-notify`, `notifications`, `matlab-reference`.
