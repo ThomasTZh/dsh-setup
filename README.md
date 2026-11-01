@@ -1,12 +1,12 @@
 # dsh-setup
 
-The [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) configuration this machine runs: the `web` profile, two local presets, a chat preset bundle, five plugins, two skills, and the global instructions. Recorded against harness `0.2.1-rc.2` on Linux.
+The [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) configuration this machine runs: the `web` profile, two local presets, a chat preset bundle, five plugins, two skills, one upstream skill installed by pin, and the global instructions. Recorded against harness `0.2.1-rc.2` on Linux.
 
 ## Abstract
 
 **Problem.** The harness composes its behaviour from layered bundles, a profile patch, and plugins and skills written locally. Reinstalling the harness reproduces none of the decisions taken on top of it, so the working setup exists only on the machine that made them.
 
-**Contribution.** This repository is that authored layer: the profile patch with its two preset rows, a `chat` preset bundle that cannot touch the disk, a per-call tool policy, the MATLAB catalogue tools, an MCP auto-approval permission bundle, a KDE notification bundle, two skills, and the global instructions. The novel parts are the policy layer, the chat guard, the MATLAB reference plugin, the `workspace-write-mcp` approval predicate, and the notifier's suppression of auto-approved calls; the rest records loader overrides that would otherwise be rediscovered by reading a live profile.
+**Contribution.** This repository is that authored layer: the profile patch with its two preset rows, a `chat` preset bundle that cannot touch the disk, a per-call tool policy, the MATLAB catalogue tools, an MCP auto-approval permission bundle, a KDE notification bundle, two skills, the pinned install of one upstream skill, and the global instructions. The novel parts are the policy layer, the chat guard, the MATLAB reference plugin, the `workspace-write-mcp` approval predicate, and the notifier's suppression of auto-approved calls; the rest records loader overrides that would otherwise be rediscovered by reading a live profile.
 
 **Approach.** Every file is a copy of what runs, grouped by owner. The tree does not mirror the install targets, so restoring copies each file to its destination and substitutes five placeholders ([Restore](#restore)). Anything obtainable from upstream is referenced by pin in [`upstreams.yml`](upstreams.yml) and [`THIRD_PARTY.md`](THIRD_PARTY.md); no upstream code is copied.
 
@@ -41,7 +41,7 @@ Original files first, then the records for third-party work. Install destination
 
 | Name | Path | Contents |
 |---|---|---|
-| Source registry | [`upstreams.yml`](upstreams.yml) | Pins, licences, what is not here |
+| Source registry | [`upstreams.yml`](upstreams.yml) | Pins, licences, what is not here, including the `directing-image-prompts` skill |
 | Attribution | [`THIRD_PARTY.md`](THIRD_PARTY.md) | Per-project credit and compliance |
 
 ### The profile
@@ -58,7 +58,7 @@ The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max
 | `matlab` | 1 | `preset-matlab` row | the same, plus goals, MATLAB MCP, and `matlab-reference`; skill roots are the on-request directory and the toolkit's `matlab-core` |
 | `chat` | 5 | `@local/dsh-chat-preset` | persona, guard, `AGENTS.md`, skill, web tools, compaction; no filesystem, no shell |
 
-`general` and `matlab` both mount `skill-filesystem` with `includeDefaultRoots: false` and an explicit `customSkillDirs` list, so their catalogue is exactly what those roots contain. `chat` uses the default roots, which is how `brainstorm` and `pub-gh` reach it.
+`general` and `matlab` both mount `skill-filesystem` with `includeDefaultRoots: false` and an explicit `customSkillDirs` list, so their catalogue is exactly what those roots contain. `chat` uses the default roots, which is how `brainstorm` and `pub-gh` reach it. `directing-image-prompts` is symlinked into the on-request root as well, so it reaches all three presets and any other harness or agent tool that scans `~/.agents/skills`.
 
 ### Five pieces worth reading
 
@@ -85,7 +85,7 @@ The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max
 
 ### Restore
 
-No installer is included. The files are copies plus five placeholders, so restoring is a copy and a substitution:
+No installer is included. The files are copies plus five placeholders, so restoring is a copy and a substitution, plus one pinned clone for the upstream skill:
 
 ```sh
 DSH_HOME=${DSH_HOME:-$HOME/.dsh}
@@ -101,8 +101,15 @@ cp -r plugins/dsh-kde-notify "$LOCAL_AI/plugins/"
 cp -r skills/brainstorm skills/pub-gh "$HOME/.agents/skills/"
 ln -sfn "$HOME/.agents/skills/brainstorm" "$LOCAL_AI/skills/on-request/brainstorm"
 ln -sfn "$HOME/.agents/skills/pub-gh" "$LOCAL_AI/skills/on-request/pub-gh"
+git clone https://github.com/Nanoleava/directing-image-prompts \
+  "$HOME/.agents/skills/directing-image-prompts"
+git -C "$HOME/.agents/skills/directing-image-prompts" checkout 78e605fcb64293cc70516a5c522bc4dc1763e90f
+ln -sfn "$HOME/.agents/skills/directing-image-prompts" \
+  "$LOCAL_AI/skills/on-request/directing-image-prompts"
 cp AGENTS.md "$DSH_HOME/AGENTS.md"
 ```
+
+`directing-image-prompts` is the one skill restored by clone rather than by copy: upstream declares no licence, so its text stays in its own repository and only the pin and the install location are recorded here. It is cloned into `~/.agents/skills`, the root both the harness default and Pi scan, and symlinked into the on-request root that the two local presets read.
 
 Then replace the placeholders in `cordis.patch.yml` and `package.json` before starting the harness: `__SETUP_ROOT__` with the clone path, `__LOCAL_AI__` with `$LOCAL_AI`, `__MATLAB_HOME__` with the toolkit root, `__HOME__` with `$HOME`, and `__WORKSPACE__` with the directory holding the Office MCP project. Finish with:
 
@@ -126,6 +133,8 @@ Run against this tree and the live harness on the recorded machine:
 | MCP auto-approval | `node --test plugins/dsh-mcp-auto-permission/test/index.test.mjs` | pass, 6 tests |
 | KDE notification | `node --test plugins/dsh-kde-notify/test/index.test.mjs` | pass, 5 tests |
 | Restore layout | copy block with temporary `HOME`, `DSH_HOME`, and `LOCAL_AI` | pass: every copied file and package tree arrived; the root `notifications.mjs` link exists in the release tree; `pnpm install` and `dsh` not run in the temporary tree |
+| Upstream skill install | clone and symlink block with a temporary `HOME`, then `pi --mode rpc --offline` with a `get_commands` request | pass: one `skill:directing-image-prompts` command resolving to the cloned `SKILL.md` |
+| Live catalogue | session catalogue on the running harness after the symlink, no restart | pass: `directing-image-prompts` listed next to the two original skills |
 | Composition | `dsh --profile web --dump-config` on the live harness | exit 0, `preset-chat`, `preset-general`, `preset-matlab`, and `workspace-write-mcp` present |
 | Live mode | user check after restart | pass: `workspace-write-mcp` MCP calls run; non-MCP approvals still ask |
 | Live notification | user check after restart | pass: no alert for auto-approved MCP, alert for a non-MCP approval and a user question, no completion alert |
@@ -138,11 +147,11 @@ Run against this tree and the live harness on the recorded machine:
 
 ## Conclusion
 
-The repository supports restoring this exact harness composition on a comparable Linux host with the harness and the pinned packages installed. It does not restore the external MCP servers, the generated agent presets, or the third-party skill roots. The tests cover the policy, the MATLAB reference tools, the MCP auto-approval predicate, and the notifier's approval handling rather than the whole loader. The live checks confirm the two new behaviours on this machine.
+The repository supports restoring this exact harness composition on a comparable Linux host with the harness and the pinned packages installed. It does not restore the external MCP servers, the generated agent presets, or the third-party skill roots; the one upstream skill is restored by a pinned clone instead. The tests cover the policy, the MATLAB reference tools, the MCP auto-approval predicate, and the notifier's approval handling rather than the whole loader. The live checks confirm the two new behaviours on this machine.
 
 ## Acknowledgements
 
-The harness, its bundles, and its shipped presets are the work of the DeepSeek Harness project [1]. The eight profile plugins are the work of their own maintainers ([2]–[8]). `ub-mode` is Robert C. Martin's [9], the MATLAB Toolkit is MathWorks' [10], Playwright MCP is Microsoft's [11], and `js-yaml` is the work of its contributors [12]. Every project, licence, and pin is listed in [`THIRD_PARTY.md`](THIRD_PARTY.md) and [`upstreams.yml`](upstreams.yml).
+The harness, its bundles, and its shipped presets are the work of the DeepSeek Harness project [1]. The eight profile plugins are the work of their own maintainers ([2]–[8]). `ub-mode` is Robert C. Martin's [9], the MATLAB Toolkit is MathWorks' [10], Playwright MCP is Microsoft's [11], `js-yaml` is the work of its contributors [12], and `directing-image-prompts` is Nanoleava's [13]. Every project, licence, and pin is listed in [`THIRD_PARTY.md`](THIRD_PARTY.md) and [`upstreams.yml`](upstreams.yml).
 
 ## References
 
@@ -158,3 +167,4 @@ The harness, its bundles, and its shipped presets are the work of the DeepSeek H
 10. MATLAB Agentic Toolkit. <https://github.com/matlab/matlab-agentic-toolkit>. MathWorks BSD-3-Clause, use restricted to MathWorks products.
 11. Playwright MCP. <https://github.com/microsoft/playwright-mcp>. Apache-2.0.
 12. `js-yaml`. <https://github.com/nodeca/js-yaml>. MIT.
+13. `directing-image-prompts`. <https://github.com/Nanoleava/directing-image-prompts>. No licence declared upstream; installed separately.

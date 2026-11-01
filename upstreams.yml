@@ -119,6 +119,18 @@ upstreams:
       Installed at ~/.agents/skills/ub-mode and symlinked into the on-request
       root both local presets scan. Not copied here: the text is upstream's.
 
+  - name: directing-image-prompts
+    kind: skill
+    repository: https://github.com/Nanoleava/directing-image-prompts
+    pin: 78e605fcb64293cc70516a5c522bc4dc1763e90f
+    installed: 78e605f (full clone)
+    license: none declared upstream
+    note: >-
+      Cloned into ~/.agents/skills/directing-image-prompts and symlinked into
+      the on-request root both local presets scan. ~/.agents/skills is the
+      shared root, so Pi discovers the same clone. Not copied here: the text is
+      upstream's.
+
   - name: MATLAB Agentic Toolkit
     kind: toolkit
     repository: https://github.com/matlab/matlab-agentic-toolkit

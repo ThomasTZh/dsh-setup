@@ -2,6 +2,13 @@
 
 Newest first, ordered rather than dated. The repository records the configuration that runs; a calendar date on the record would make it read as a snapshot that ages, so entries describe what changed instead.
 
+## directing-image-prompts skill
+
+- Added `directing-image-prompts` to [Restore](README.md#restore) and the skill inventory as a clone pinned at `78e605fcb64293cc70516a5c522bc4dc1763e90f` of [Nanoleava/directing-image-prompts](https://github.com/Nanoleava/directing-image-prompts), installed under `~/.agents/skills` and symlinked into the on-request root.
+- Recorded it in [`upstreams.yml`](upstreams.yml), [`THIRD_PARTY.md`](THIRD_PARTY.md), and the README reference list as unlicensed upstream: only the pin and install location are published, and no skill text is copied.
+- The shared `~/.agents/skills` root means the same clone is discovered by Pi as well as the harness, so the install is recorded once.
+- Verified in a temporary `HOME`: the clone and symlink block yields exactly one `skill:directing-image-prompts` command from `pi --mode rpc --offline`. The running harness listed the skill in its catalogue after the symlink, without a restart.
+
 ## MCP auto-approval and notification bundles
 
 - Added `plugins/dsh-mcp-auto-permission`: a bundle that adds the `workspace-write-mcp` permission preset, claims `mcp__*` approval requests as `allowed-once`, and exposes `mcpAutoPermission.autoApproves()` for other plugins.

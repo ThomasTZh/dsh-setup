@@ -26,6 +26,7 @@ Components this setup mounts, installs, or reads. None of them is copied into th
 | Component | Role here | Project | Licence | Pin |
 |---|---|---|---|---|
 | `ub-mode` | Skill installed at `~/.agents/skills/ub-mode` and symlinked into the on-request root | [unclebob/ub-mode](https://github.com/unclebob/ub-mode) | None declared upstream; installed separately and not distributed here | `57a8bdd28e45ed41900ace0bafa2ff76dd9ed70f` |
+| `directing-image-prompts` | Skill installed at `~/.agents/skills/directing-image-prompts` and symlinked into the on-request root; that shared root is what the harness default and Pi both scan | [Nanoleava/directing-image-prompts](https://github.com/Nanoleava/directing-image-prompts) | None declared upstream; installed separately and not distributed here | `78e605fcb64293cc70516a5c522bc4dc1763e90f` |
 | MATLAB Agentic Toolkit | 120 skills symlinked into `~/.agents/skills`, the `matlab-core` root the `matlab` preset scans, and the catalogue `matlab-reference` searches | [matlab/matlab-agentic-toolkit](https://github.com/matlab/matlab-agentic-toolkit) | MathWorks BSD-3-Clause, use restricted to MathWorks products; local install, not distributed here | local install under `~/.matlab/agentic-toolkits/matlab` |
 | Playwright MCP | Browser tools, mounted as the `playwright-mcp` MCP server in both presets | [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp) | Apache-2.0 | local install |
 | `js-yaml` | YAML parsing in `matlab-reference`, loaded from the harness bundle | [nodeca/js-yaml](https://github.com/nodeca/js-yaml) | MIT | as bundled with the harness |
@@ -42,7 +43,7 @@ Install each component from its own project or package manager at the pin in [`u
 
 - **Original files:** the MIT [`LICENSE`](LICENSE) covers `plugins/dsh-chat-preset`, `plugins/local-ai-policy`, `plugins/notifications`, `plugins/dsh-kde-notify`, `plugins/dsh-mcp-auto-permission`, `plugins/matlab-reference`, `skills/brainstorm`, `skills/pub-gh`, the two presets in `profiles/web/cordis.patch.yml`, `AGENTS.md`, and the documentation files in this repository.
 - **Upstream notices:** they stay with their own projects, because no upstream file is present here. No third-party licence text needs to be redistributed for that reason.
-- **Restricted components:** the MathWorks toolkit is licensed for use with MathWorks products; `ub-mode` declares no licence upstream. Both are installed separately and are neither copied nor relicensed here.
+- **Restricted components:** the MathWorks toolkit is licensed for use with MathWorks products; `ub-mode` and `directing-image-prompts` declare no licence upstream. All three are installed separately and are neither copied nor relicensed here.
 - **Unresolved:** none. If a future change copies an upstream file, its project, exact revision, retained notice, and licence must be added to this file before the change is published.
 
 ## Not third-party
