@@ -4,9 +4,9 @@
   "dependencies": {
     "@linxin666/dsh-client-ui-skill-explorer": "^0.4.8",
     "@linxin666/dsh-usage": "^0.4.8",
-    "@local/dsh-chat-preset": "link:__SETUP_ROOT__/plugins/dsh-chat-preset",
-    "@local/dsh-kde-notify": "link:__SETUP_ROOT__/plugins/dsh-kde-notify",
-    "@local/dsh-mcp-auto-permission": "link:__SETUP_ROOT__/plugins/dsh-mcp-auto-permission",
+    "@local/dsh-chat-preset": "link:__DSH_HOME__/local-plugins/dsh-chat-preset",
+    "@local/dsh-kde-notify": "link:__LOCAL_AI__/plugins/dsh-kde-notify",
+    "@local/dsh-mcp-auto-permission": "link:__DSH_HOME__/local-plugins/dsh-mcp-auto-permission",
     "@perrylink/dsh-github": "^0.7.27",
     "dsh-better-sidebar": "^0.28.0",
     "dsh-codex": "^0.3.2",

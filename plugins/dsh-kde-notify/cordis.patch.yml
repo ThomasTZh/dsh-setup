@@ -1,6 +1,0 @@
-# KDE notification host plugin. It alerts only when a human approval or
-# answer is actually requested. The plugin claims no decisions and does not
-# change tool execution.
-- insert:
-    - id: kde-notify
-      name: '@local/dsh-kde-notify'

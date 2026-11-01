@@ -1,0 +1,91 @@
+# Original components mounted by the web profile, one repository each.
+# Pins are the commits published and verified when the split was recorded.
+# The profile reads the installed paths, never these checkouts: the restore
+# block clones at the pin and copies the files listed for each component.
+
+components:
+  - name: dsh-chat-preset
+    kind: bundle
+    package: "@local/dsh-chat-preset"
+    repository: https://github.com/ThomasTZh/dsh-chat-preset
+    pin: baaf5755623942f3a33eb7877b777f909794633b
+    installs:
+      - "$DSH_HOME/local-plugins/dsh-chat-preset"
+    files:
+      - package.json
+      - cordis.patch.yml
+      - lib
+      - README.md
+    test: node --test test/guard.test.mjs
+
+  - name: dsh-mcp-auto-permission
+    kind: bundle
+    package: "@local/dsh-mcp-auto-permission"
+    repository: https://github.com/ThomasTZh/dsh-mcp-auto-permission
+    pin: 8b12bf012c4fcd3ae877deefa18376fddf716110
+    installs:
+      - "$DSH_HOME/local-plugins/dsh-mcp-auto-permission"
+    files:
+      - package.json
+      - cordis.patch.yml
+      - lib
+      - README.md
+    test: node --test test/index.test.mjs
+
+  - name: dsh-kde-notify
+    kind: bundle
+    package: "@local/dsh-kde-notify"
+    repository: https://github.com/ThomasTZh/dsh-kde-notify
+    pin: 230699f3dc001bae8c55e64ce3e12c832b0a0dc5
+    installs:
+      - "$LOCAL_AI/plugins/dsh-kde-notify"
+      - "$LOCAL_AI/notifications.mjs"
+    files:
+      - plugins/dsh-kde-notify
+      - plugins/notifications/notifications.mjs
+    test: node --test plugins/dsh-kde-notify/test/index.test.mjs
+
+  - name: dsh-local-ai-policy
+    kind: module
+    repository: https://github.com/ThomasTZh/dsh-local-ai-policy
+    pin: 02dd3c8ba840536a955b1cb355959c401f87912d
+    installs:
+      - "$LOCAL_AI/policy.mjs"
+    files:
+      - policy.mjs
+    test: node --test policy.test.mjs
+
+  - name: dsh-matlab-reference
+    kind: module
+    repository: https://github.com/ThomasTZh/dsh-matlab-reference
+    pin: 5a2f2b77e20fd4f935d4c87e707a3654cc7f0c19
+    installs:
+      - "$LOCAL_AI/plugins/matlab-reference.mjs"
+    files:
+      - matlab-reference.mjs
+    test: DSH_PACKAGE_JSON=<harness package.json> node --test matlab-reference.test.mjs
+
+  - name: dsh-skill-brainstorm
+    kind: skill
+    skill: brainstorm
+    repository: https://github.com/ThomasTZh/dsh-skill-brainstorm
+    pin: 8133287e181351aee2070dcaf5f651c1a84abbe5
+    installs:
+      - "~/.agents/skills/brainstorm"
+      - "$LOCAL_AI/skills/on-request/brainstorm (symlink)"
+    files:
+      - SKILL.md
+    test: front matter parse
+
+  - name: dsh-skill-pub-gh
+    kind: skill
+    skill: pub-gh
+    repository: https://github.com/ThomasTZh/dsh-skill-pub-gh
+    pin: b5968cf5132353f4eb14ddf4cad4fff1b7fb0bb8
+    installs:
+      - "~/.agents/skills/pub-gh"
+      - "$LOCAL_AI/skills/on-request/pub-gh (symlink)"
+    files:
+      - SKILL.md
+      - assets
+    test: front matter parse

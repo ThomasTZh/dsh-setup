@@ -1,16 +1,16 @@
 # dsh-setup
 
-The [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) configuration this machine runs: the `web` profile, two local presets, a chat preset bundle, five plugins, two skills, one upstream skill installed by pin, and the global instructions. Recorded against harness `0.2.1-rc.2` on Linux.
+The composition of the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) `web` profile this machine runs: the profile patch with its two local presets, the `chat` preset wiring, the global instructions, the pins for seven original component repositories, and the third-party credits. Recorded against harness `0.2.1-rc.2` on Linux.
 
 ## Abstract
 
-**Problem.** The harness composes its behaviour from layered bundles, a profile patch, and plugins and skills written locally. Reinstalling the harness reproduces none of the decisions taken on top of it, so the working setup exists only on the machine that made them.
+**Problem.** The harness composes its behaviour from layered bundles, a profile patch, plugins, and skills. Reinstalling the harness reproduces none of the decisions taken on top of it, and a single repository that holds both the wiring and every component mixes two very different things: a host-specific configuration record and reusable code.
 
-**Contribution.** This repository is that authored layer: the profile patch with its two preset rows, a `chat` preset bundle that cannot touch the disk, a per-call tool policy, the MATLAB catalogue tools, an MCP auto-approval permission bundle, a KDE notification bundle, two skills, the pinned install of one upstream skill, and the global instructions. The novel parts are the policy layer, the chat guard, the MATLAB reference plugin, the `workspace-write-mcp` approval predicate, and the notifier's suppression of auto-approved calls; the rest records loader overrides that would otherwise be rediscovered by reading a live profile.
+**Contribution.** This repository is the wiring only. The plugins and skills the profile mounts are original work, published from their own repositories and pinned here by commit in [`components.yml`](components.yml). What remains is the profile patch, the package manifest, the global instructions, the inventory, and the third-party records. The novel parts are the policy layer, the chat guard, the MATLAB reference tools, the `workspace-write-mcp` approval predicate, and the notifier's suppression of auto-approved calls; each is described and tested in its own repository.
 
-**Approach.** Every file is a copy of what runs, grouped by owner. The tree does not mirror the install targets, so restoring copies each file to its destination and substitutes five placeholders ([Restore](#restore)). Anything obtainable from upstream is referenced by pin in [`upstreams.yml`](upstreams.yml) and [`THIRD_PARTY.md`](THIRD_PARTY.md); no upstream code is copied.
+**Approach.** No component source is stored here. Restoring copies the composition files to their destinations and clones each component at its pin ([Restore](#restore)).
 
-**Evidence.** The composition dump succeeds and contains all three local presets, the policy, MATLAB reference, MCP auto-approval, and notification plugin tests pass, and the privacy and link checks are clean. The notifier and permission mode were also confirmed on the live harness after a restart. Commands and outcomes are in [Verification](#verification).
+**Evidence.** The restore block completes from a temporary `HOME` using only clones of the published repositories, every installed file matches its pinned commit byte for byte, the composition dump names all three local presets, and the privacy and link checks are clean. Commands and outcomes are in [Verification](#verification).
 
 ## Composition
 
@@ -22,18 +22,11 @@ Original files first, then the records for third-party work. Install destination
 
 | Name | Path | Contents |
 |---|---|---|
-| Profile patch | [`profiles/web/cordis.patch.yml`](profiles/web/cordis.patch.yml) | Loader overrides and both local presets |
-| Profile dependencies | [`profiles/web/package.json`](profiles/web/package.json) | Dependencies and the bundle list |
-| Chat preset | [`plugins/dsh-chat-preset/`](plugins/dsh-chat-preset) | The `chat` preset and its tool guard |
-| Tool policy | [`plugins/local-ai-policy/policy.mjs`](plugins/local-ai-policy/policy.mjs) | Per-call policy for both presets |
-| MATLAB reference | [`plugins/matlab-reference/matlab-reference.mjs`](plugins/matlab-reference/matlab-reference.mjs) | Skill search and read tools |
-| MCP permission | [`plugins/dsh-mcp-auto-permission/`](plugins/dsh-mcp-auto-permission) | The `workspace-write-mcp` preset and its approval predicate |
-| Desktop notifications | [`plugins/dsh-kde-notify/`](plugins/dsh-kde-notify) | Approval and question alerts, with auto-approved MCP suppression |
-| Notification core | [`plugins/notifications/notifications.mjs`](plugins/notifications/notifications.mjs) | KDE Connect delivery, throttling, and logging. Root `notifications.mjs` links here for the notification bundle's installed-path import |
-| Brainstorm | [`skills/brainstorm/`](skills/brainstorm) | One skill |
-| pub-gh | [`skills/pub-gh/`](skills/pub-gh) | Release skill and two templates |
+| Profile patch | [`profiles/web/cordis.patch.yml`](profiles/web/cordis.patch.yml) | Loader overrides, both local presets, and the plugin mounts that come from component repositories |
+| Profile dependencies | [`profiles/web/package.json`](profiles/web/package.json) | Dependencies, the bundle list, and the three `link:` targets |
+| Component pins | [`components.yml`](components.yml) | Every first-party component: repository, pin, install destinations, files, test command |
 | Global instructions | [`AGENTS.md`](AGENTS.md) | Instructions for every session |
-| Inventory | [`docs/inventory.md`](docs/inventory.md) | Override table and reasoning |
+| Inventory | [`docs/inventory.md`](docs/inventory.md) | Override table, bundle order, and reasoning |
 | Licence | [`LICENSE`](LICENSE) | MIT, original files only |
 | Changelog | [`CHANGELOG.md`](CHANGELOG.md) | What changed, newest first |
 
@@ -41,12 +34,26 @@ Original files first, then the records for third-party work. Install destination
 
 | Name | Path | Contents |
 |---|---|---|
-| Source registry | [`upstreams.yml`](upstreams.yml) | Pins, licences, what is not here, including the `directing-image-prompts` skill |
+| Source registry | [`upstreams.yml`](upstreams.yml) | Pins, licences, what is not here, including skills installed separately |
 | Attribution | [`THIRD_PARTY.md`](THIRD_PARTY.md) | Per-project credit and compliance |
+
+### Components
+
+Seven original repositories, each with its own README, tests, licence, and verification. The full pins are the commits that were published and verified when the split was recorded; [`components.yml`](components.yml) and [Restore](#restore) carry the SHAs.
+
+| Component | Repository | Installs to |
+|---|---|---|
+| `dsh-chat-preset` | [ThomasTZh/dsh-chat-preset](https://github.com/ThomasTZh/dsh-chat-preset) | `$DSH_HOME/local-plugins/dsh-chat-preset` |
+| `dsh-mcp-auto-permission` | [ThomasTZh/dsh-mcp-auto-permission](https://github.com/ThomasTZh/dsh-mcp-auto-permission) | `$DSH_HOME/local-plugins/dsh-mcp-auto-permission` |
+| `dsh-kde-notify` | [ThomasTZh/dsh-kde-notify](https://github.com/ThomasTZh/dsh-kde-notify) | `$LOCAL_AI/plugins/dsh-kde-notify` and `$LOCAL_AI/notifications.mjs` |
+| `dsh-local-ai-policy` | [ThomasTZh/dsh-local-ai-policy](https://github.com/ThomasTZh/dsh-local-ai-policy) | `$LOCAL_AI/policy.mjs` |
+| `dsh-matlab-reference` | [ThomasTZh/dsh-matlab-reference](https://github.com/ThomasTZh/dsh-matlab-reference) | `$LOCAL_AI/plugins/matlab-reference.mjs` |
+| `dsh-skill-brainstorm` | [ThomasTZh/dsh-skill-brainstorm](https://github.com/ThomasTZh/dsh-skill-brainstorm) | `~/.agents/skills/brainstorm` and a symlink in the on-request root |
+| `dsh-skill-pub-gh` | [ThomasTZh/dsh-skill-pub-gh](https://github.com/ThomasTZh/dsh-skill-pub-gh) | `~/.agents/skills/pub-gh` and a symlink in the on-request root |
 
 ### The profile
 
-Fifteen bundles load in the `web` profile: four shipped with the harness, three local (`@local/dsh-chat-preset`, `@local/dsh-mcp-auto-permission`, `@local/dsh-kde-notify`), and eight third-party packages ([2]–[8]). Pins live in [`profiles/web/package.json`](profiles/web/package.json).
+Fifteen bundles load in the `web` profile: four shipped with the harness, three local (`@local/dsh-chat-preset`, `@local/dsh-mcp-auto-permission`, `@local/dsh-kde-notify`), and eight third-party packages ([2]-[8]). Pins live in [`profiles/web/package.json`](profiles/web/package.json); the three local bundles are cloned from their repositories at the pins in [`components.yml`](components.yml).
 
 The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max` as the default model, the local llama.cpp provider, theme and transcript settings, session logging off, the unused UI panels disabled, and the presets below. The `@local/dsh-mcp-auto-permission` bundle adds the four permission presets: `read-only`, `workspace-write`, `workspace-write-mcp`, and `danger-full-access`; the experimental `auto` preset is registered at runtime by the auto-review bundle. [`docs/inventory.md`](docs/inventory.md) tabulates every override.
 
@@ -58,19 +65,7 @@ The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max
 | `matlab` | 1 | `preset-matlab` row | the same, plus goals, MATLAB MCP, and `matlab-reference`; skill roots are the on-request directory and the toolkit's `matlab-core` |
 | `chat` | 5 | `@local/dsh-chat-preset` | persona, guard, `AGENTS.md`, skill, web tools, compaction; no filesystem, no shell |
 
-`general` and `matlab` both mount `skill-filesystem` with `includeDefaultRoots: false` and an explicit `customSkillDirs` list, so their catalogue is exactly what those roots contain. `chat` uses the default roots, which is how `brainstorm` and `pub-gh` reach it. `directing-image-prompts` is symlinked into the on-request root as well, so it reaches all three presets and any other harness or agent tool that scans `~/.agents/skills`.
-
-### Five pieces worth reading
-
-**1. A policy layer per preset.** [`policy.mjs`](plugins/local-ai-policy/policy.mjs) hooks `tools/execute` and decides per call: web tools always allowed, MATLAB tools and official Toolkit skills only in the `matlab` preset, Playwright asks for approval, Toolkit reads denied from any other preset. It is one file, injected as `local-ai-policy` at the top of both presets, and it is why `general` cannot quietly fall back to MATLAB.
-
-**2. A chat preset that cannot touch the disk.** [`plugins/dsh-chat-preset`](plugins/dsh-chat-preset) registers a `chat` preset holding a persona, `AGENTS.md`, web tools, skill loading, and compaction, and nothing else. [`lib/guard.js`](plugins/dsh-chat-preset/lib/guard.js) narrows each joining agent to `web_search`, `web_fetch`, and `skill`, reading the allow list from the agent's own visible tools so a search-only configuration still works.
-
-**3. MATLAB skills without a catalogue dump.** [`matlab-reference.mjs`](plugins/matlab-reference/matlab-reference.mjs) indexes the official MathWorks Toolkit catalogue and exposes `search_matlab_skills` and `read_matlab_skill` with bounded pages and continuation offsets. The `matlab` preset mounts it instead of a 120-entry skill root; `general` never sees it.
-
-**4. MCP auto-approval as a permission preset.** [`plugins/dsh-mcp-auto-permission`](plugins/dsh-mcp-auto-permission) adds `workspace-write-mcp` with the same sandbox and approval knobs as `workspace-write`, claims `mcp__*` approval requests as `allowed-once`, and exposes `mcpAutoPermission.autoApproves(session, toolName)` so another plugin can tell an auto-approved call from a real prompt.
-
-**5. Notifications only for real human input.** [`plugins/dsh-kde-notify`](plugins/dsh-kde-notify) alerts on approval and question requests. It asks `mcpAutoPermission` before an approval alert and suppresses the alert when the MCP plugin will claim the request. Turn completion, failure, blocked, and output-limit events no longer notify.
+`general` and `matlab` both mount `skill-filesystem` with `includeDefaultRoots: false` and an explicit `customSkillDirs` list, so their catalogue is exactly what those roots contain. `chat` uses the default roots. The two skill components are installed into `~/.agents/skills` and symlinked into the on-request root, so they reach all three presets and any other agent that scans the shared root.
 
 ### Requirements
 
@@ -78,40 +73,59 @@ The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max
 |---|---|
 | Operating system | Linux with a desktop session; notifications are delivered through KDE Connect |
 | Harness | DeepSeek Harness `0.2.1-rc.2`, installed globally from npm [1] |
-| Runtime | Node `v22.22.2` for the tests and the local plugins |
+| Runtime | Node `v22.22.2` for the component tests |
 | Package manager | pnpm `12.15.0` for the profile dependencies |
+| Git | Needed once to clone the seven component repositories |
 | Python | Python 3 with PyYAML, for the YAML check below |
-| Network | Needed once to install the pinned packages; no credential is stored here |
+| Network | Needed once to install the pinned packages and clone the components; no credential is stored here |
 
 ### Restore
 
-No installer is included. The files are copies plus five placeholders, so restoring is a copy and a substitution, plus one pinned clone for the upstream skill:
+No installer is included. Restoring is a clone of seven pinned repositories, a copy to the destinations the profile reads, and five placeholder substitutions:
 
 ```sh
 DSH_HOME=${DSH_HOME:-$HOME/.dsh}
 LOCAL_AI=${LOCAL_AI:-$HOME/.config/local-ai}
+COMPONENTS=${COMPONENTS:-$HOME/dsh-components}
 
-mkdir -p "$DSH_HOME/profiles/web" "$DSH_HOME/local-plugins" \
-         "$LOCAL_AI/plugins" "$LOCAL_AI/skills/on-request" "$HOME/.agents/skills"
+mkdir -p "$DSH_HOME/profiles/web" "$DSH_HOME/local-plugins/dsh-chat-preset" \
+         "$DSH_HOME/local-plugins/dsh-mcp-auto-permission" "$LOCAL_AI/plugins" \
+         "$LOCAL_AI/skills/on-request" "$HOME/.agents/skills/brainstorm" \
+         "$HOME/.agents/skills/pub-gh" "$COMPONENTS"
+
+clone() {  # clone <repo> <pin>
+  git clone "https://github.com/ThomasTZh/$1" "$COMPONENTS/$1"
+  git -C "$COMPONENTS/$1" checkout "$2"
+}
+clone dsh-chat-preset          baaf5755623942f3a33eb7877b777f909794633b
+clone dsh-mcp-auto-permission  8b12bf012c4fcd3ae877deefa18376fddf716110
+clone dsh-kde-notify           230699f3dc001bae8c55e64ce3e12c832b0a0dc5
+clone dsh-local-ai-policy      02dd3c8ba840536a955b1cb355959c401f87912d
+clone dsh-matlab-reference     5a2f2b77e20fd4f935d4c87e707a3654cc7f0c19
+clone dsh-skill-brainstorm     8133287e181351aee2070dcaf5f651c1a84abbe5
+clone dsh-skill-pub-gh         b5968cf5132353f4eb14ddf4cad4fff1b7fb0bb8
+
 cp profiles/web/cordis.patch.yml profiles/web/package.json "$DSH_HOME/profiles/web/"
-cp plugins/local-ai-policy/policy.mjs plugins/notifications/notifications.mjs "$LOCAL_AI/"
-cp plugins/matlab-reference/matlab-reference.mjs "$LOCAL_AI/plugins/"
-cp -r plugins/dsh-chat-preset plugins/dsh-mcp-auto-permission "$DSH_HOME/local-plugins/"
-cp -r plugins/dsh-kde-notify "$LOCAL_AI/plugins/"
-cp -r skills/brainstorm skills/pub-gh "$HOME/.agents/skills/"
+cp -r "$COMPONENTS/dsh-chat-preset/package.json" \
+      "$COMPONENTS/dsh-chat-preset/cordis.patch.yml" \
+      "$COMPONENTS/dsh-chat-preset/lib" \
+      "$DSH_HOME/local-plugins/dsh-chat-preset/"
+cp -r "$COMPONENTS/dsh-mcp-auto-permission/package.json" \
+      "$COMPONENTS/dsh-mcp-auto-permission/cordis.patch.yml" \
+      "$COMPONENTS/dsh-mcp-auto-permission/lib" \
+      "$DSH_HOME/local-plugins/dsh-mcp-auto-permission/"
+cp -r "$COMPONENTS/dsh-kde-notify/plugins/dsh-kde-notify" "$LOCAL_AI/plugins/"
+cp "$COMPONENTS/dsh-kde-notify/plugins/notifications/notifications.mjs" "$LOCAL_AI/notifications.mjs"
+cp "$COMPONENTS/dsh-local-ai-policy/policy.mjs" "$LOCAL_AI/policy.mjs"
+cp "$COMPONENTS/dsh-matlab-reference/matlab-reference.mjs" "$LOCAL_AI/plugins/matlab-reference.mjs"
+cp -r "$COMPONENTS/dsh-skill-brainstorm/." "$HOME/.agents/skills/brainstorm/"
+cp -r "$COMPONENTS/dsh-skill-pub-gh/." "$HOME/.agents/skills/pub-gh/"
 ln -sfn "$HOME/.agents/skills/brainstorm" "$LOCAL_AI/skills/on-request/brainstorm"
 ln -sfn "$HOME/.agents/skills/pub-gh" "$LOCAL_AI/skills/on-request/pub-gh"
-git clone https://github.com/Nanoleava/directing-image-prompts \
-  "$HOME/.agents/skills/directing-image-prompts"
-git -C "$HOME/.agents/skills/directing-image-prompts" checkout 78e605fcb64293cc70516a5c522bc4dc1763e90f
-ln -sfn "$HOME/.agents/skills/directing-image-prompts" \
-  "$LOCAL_AI/skills/on-request/directing-image-prompts"
 cp AGENTS.md "$DSH_HOME/AGENTS.md"
 ```
 
-`directing-image-prompts` is the one skill restored by clone rather than by copy: upstream declares no licence, so its text stays in its own repository and only the pin and the install location are recorded here. It is cloned into `~/.agents/skills`, the root both the harness default and Pi scan, and symlinked into the on-request root that the two local presets read.
-
-Then replace the placeholders in `cordis.patch.yml` and `package.json` before starting the harness: `__SETUP_ROOT__` with the clone path, `__LOCAL_AI__` with `$LOCAL_AI`, `__MATLAB_HOME__` with the toolkit root, `__HOME__` with `$HOME`, and `__WORKSPACE__` with the directory holding the Office MCP project. Finish with:
+Then replace the placeholders before starting the harness: `__DSH_HOME__` with `$DSH_HOME`, `__LOCAL_AI__` with `$LOCAL_AI`, `__MATLAB_HOME__` with the toolkit root, `__HOME__` with `$HOME`, and `__WORKSPACE__` with the directory holding the Office MCP project. Finish with:
 
 ```sh
 cd "$DSH_HOME/profiles/web" && pnpm install
@@ -122,36 +136,31 @@ dsh web                                                           # restart to l
 
 ## Verification
 
-Run against this tree and the live harness on the recorded machine:
+Run against this tree, the seven published repositories, and the live harness on the recorded machine:
 
 | Check | Command | Result |
 |---|---|---|
-| YAML parses | `python3 -c 'import yaml,sys; yaml.safe_load(open(sys.argv[1]))'` on every tracked `.yml` file | pass |
-| JavaScript parses | `node --check` on every tracked `.mjs` module and `lib/guard.js` | pass |
-| Tool policy | `node --test plugins/local-ai-policy/policy.test.mjs` | pass, 5 tests |
-| MATLAB reference | `DSH_PACKAGE_JSON=… node --test plugins/matlab-reference/matlab-reference.test.mjs` | pass, 2 tests |
-| MCP auto-approval | `node --test plugins/dsh-mcp-auto-permission/test/index.test.mjs` | pass, 6 tests |
-| KDE notification | `node --test plugins/dsh-kde-notify/test/index.test.mjs` | pass, 5 tests |
-| Restore layout | copy block with temporary `HOME`, `DSH_HOME`, and `LOCAL_AI` | pass: every copied file and package tree arrived; the root `notifications.mjs` link exists in the release tree; `pnpm install` and `dsh` not run in the temporary tree |
-| Upstream skill install | clone and symlink block with a temporary `HOME`, then `pi --mode rpc --offline` with a `get_commands` request | pass: one `skill:directing-image-prompts` command resolving to the cloned `SKILL.md` |
-| Live catalogue | session catalogue on the running harness after the symlink, no restart | pass: `directing-image-prompts` listed next to the two original skills |
+| Restore from pins | restore block with temporary `HOME`, `DSH_HOME`, `LOCAL_AI`, and `COMPONENTS`, cloning from GitHub | pass: seven clones at their pins, every destination populated |
+| Installed files match pins | compare each installed file with its clone | pass: byte-identical |
+| Component links | `gh api repos/ThomasTZh/<repo>/commits/<pin>` for each row of [`components.yml`](components.yml) | pass: every repository and pin resolves |
+| YAML parses | `python3 -c 'import yaml,sys; yaml.safe_load(open(sys.argv[1]))'` on `profiles/web/cordis.patch.yml`, `components.yml`, and `upstreams.yml` | pass |
+| JSON parses | `python3 -m json.tool profiles/web/package.json` | pass |
+| No component source | `git ls-files` | pass: only the composition, documentation, and manifests are tracked |
 | Composition | `dsh --profile web --dump-config` on the live harness | exit 0, `preset-chat`, `preset-general`, `preset-matlab`, and `workspace-write-mcp` present |
-| Live mode | user check after restart | pass: `workspace-write-mcp` MCP calls run; non-MCP approvals still ask |
-| Live notification | user check after restart | pass: no alert for auto-approved MCP, alert for a non-MCP approval and a user question, no completion alert |
-| Links | every relative link in `README.md` resolved | pass |
+| Links | every relative link in `README.md`, `THIRD_PARTY.md`, `docs/inventory.md`, and `CHANGELOG.md` resolved | pass |
 | Privacy | `grep` for absolute home paths and secret-shaped strings across tracked files | clean |
 
-**Not tested:** `pnpm install` from an empty `node_modules`, a full `dsh web` restart from the restored tree, and the four external MCP servers, which are not in this repository.
+**Not tested:** `pnpm install` from an empty `node_modules`, a full `dsh web` restart from the restored tree, and the four external MCP servers, which are not in this repository. The behaviour of each component is verified in its own repository rather than here.
 
-**Observed warning.** The composition dump reports `patch: entry "web-ui-…" not found` for seven UI rows (`web-ui-pet`, `web-ui-liangshen`, `web-ui-remote-bridge`, `web-ui-remote-web-ui`, `web-ui-task-board`, `web-ui-task-board-github`, `web-ui-skill-explorer`). Those ids are absent from the composed tree, so the six disables and the one enable have no effect; the Skill Center is delivered by the `@linxin666/dsh-client-ui-skill-explorer` bundle listed in the profile. The patch is left as recorded rather than changed to match, because the restore target is the configuration that runs.
+**Observed warning.** The composition dump reports `patch: entry "<id>" not found` for eight ids: `web-ui-pet`, `web-ui-remote-web-ui`, `web-ui-task-board-github`, `web-ui-task-board`, `web-ui-remote-bridge`, `web-ui-liangshen`, `web-ui-skill-explorer`, and `plugin-market`. None of those ids exists in the composed tree, so the six disables and the one enable in this patch have no effect; the Skill Center is delivered by the `@linxin666/dsh-client-ui-skill-explorer` bundle listed in the profile, and the composed tree carries `tool-plugin-market` instead of `plugin-market`. The dump runs against the live profile, which carries one row more than this record (`plugin-market`), so that single warning is reported here without a matching entry in the recorded patch. The patch is left as recorded rather than changed to match, because the restore target is the configuration that runs.
 
 ## Conclusion
 
-The repository supports restoring this exact harness composition on a comparable Linux host with the harness and the pinned packages installed. It does not restore the external MCP servers, the generated agent presets, or the third-party skill roots; the one upstream skill is restored by a pinned clone instead. The tests cover the policy, the MATLAB reference tools, the MCP auto-approval predicate, and the notifier's approval handling rather than the whole loader. The live checks confirm the two new behaviours on this machine.
+The repository supports restoring this harness composition on a comparable Linux host with the harness and the pinned packages installed, and it keeps the wiring separate from the reusable code. It does not restore the external MCP servers, the generated agent presets, or the third-party skill roots; the seven original components are restored by pinned clone, and the one upstream skill by a pinned clone of its own repository. The composition checks confirm that every pin resolves and that the restored tree matches the published commits.
 
 ## Acknowledgements
 
-The harness, its bundles, and its shipped presets are the work of the DeepSeek Harness project [1]. The eight profile plugins are the work of their own maintainers ([2]–[8]). `ub-mode` is Robert C. Martin's [9], the MATLAB Toolkit is MathWorks' [10], Playwright MCP is Microsoft's [11], `js-yaml` is the work of its contributors [12], and `directing-image-prompts` is Nanoleava's [13]. Every project, licence, and pin is listed in [`THIRD_PARTY.md`](THIRD_PARTY.md) and [`upstreams.yml`](upstreams.yml).
+The harness, its bundles, and its shipped presets are the work of the DeepSeek Harness project [1]. The eight profile plugins are the work of their own maintainers ([2]-[8]). `ub-mode` is Robert C. Martin's [9], the MATLAB Toolkit is MathWorks' [10], Playwright MCP is Microsoft's [11], `js-yaml` is the work of its contributors [12], and `directing-image-prompts` is Nanoleava's [13]. The seven components listed under [Components](#components) are original work published from this account. Every project, licence, and pin is listed in [`THIRD_PARTY.md`](THIRD_PARTY.md), [`upstreams.yml`](upstreams.yml), and [`components.yml`](components.yml).
 
 ## References
 

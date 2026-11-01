@@ -11,7 +11,7 @@ Location: `$DSH_HOME/profiles/web/`
 |---|---|---|
 | `cordis.yml` | no | Generated stub, an empty entry list. Do not edit. |
 | `cordis.patch.yml` | yes | The patch layer, applied after every bundle layer. Holds the overrides and both local presets. |
-| `package.json` | yes, templated | Dependencies plus `dsh.profile.bundles`; the `link:` target is rewritten to `__SETUP_ROOT__`. |
+| `package.json` | yes, templated | Dependencies plus `dsh.profile.bundles`; the three `link:` targets are rewritten to `__DSH_HOME__` and `__LOCAL_AI__`. |
 | `pnpm-lock.yaml` | no | Regenerated with the dependencies. |
 | `node_modules/` | no | Reinstalled. |
 
@@ -35,7 +35,7 @@ Location: `$DSH_HOME/profiles/web/`
 | 14 | `@deepseek-ai/dsh-experimental-session-titles-bundle` | Session titles. |
 | 15 | `@perrylink/dsh-github` | GitHub tools. |
 
-Third-party bundles are credited with repository links, licenses, and pins in [`../THIRD_PARTY.md`](../THIRD_PARTY.md).
+Third-party bundles are credited with repository links, licenses, and pins in [`../THIRD_PARTY.md`](../THIRD_PARTY.md). The three `@local/*` bundles are first-party: each is published in its own repository and pinned in [`../components.yml`](../components.yml).
 
 Rule of thumb: a package that adds tool schemas belongs in a preset; a package
 that adds UI or a preset may go in `bundles`. `patchReload: live` is on, so
@@ -79,17 +79,19 @@ which is how `ub-mode` and `brainstorm` reach it.
 
 ## Local plugins
 
-| Plugin | File | Mounted | Behaviour |
+| Plugin | Repository | Mounted | Behaviour |
 |---|---|---|---|
-| `dsh-chat-preset` | `plugins/dsh-chat-preset/` | bundle | Registers the `chat` preset; `lib/guard.js` narrows each joining agent to `web_search`, `web_fetch`, `skill`. |
-| `local-ai-policy` | `plugins/local-ai-policy/policy.mjs` | first row of both presets | Per-call decision: web allowed, MATLAB tools only in `matlab`, Playwright asks, Toolkit reads denied outside `matlab`. |
-| `matlab-reference` | `plugins/matlab-reference/matlab-reference.mjs` | `matlab` only | `search_matlab_skills` and `read_matlab_skill` over the Toolkit catalogue, bounded pages, continuation offsets. |
-| `mcp-auto-permission` | `plugins/dsh-mcp-auto-permission/` | bundle | Adds the `workspace-write-mcp` preset and claims `mcp__*` approval requests as `allowed-once`; exposes `mcpAutoPermission.autoApproves()`. |
-| `kde-notify` | `plugins/dsh-kde-notify/` | bundle | KDE Connect notification on an approval or question request; skips an approval claimed by `mcpAutoPermission`; no turn-completion or failure alerts. |
-| notification delivery | `plugins/notifications/notifications.mjs` | imported by `kde-notify` | Throttling, log at `~/.local/state/local-ai/notifications.log`, config at `~/.config/local-ai/notifications.json`. |
+| `dsh-chat-preset` | [ThomasTZh/dsh-chat-preset](https://github.com/ThomasTZh/dsh-chat-preset) | bundle | Registers the `chat` preset; `lib/guard.js` narrows each joining agent to `web_search`, `web_fetch`, `skill`. |
+| `local-ai-policy` | [ThomasTZh/dsh-local-ai-policy](https://github.com/ThomasTZh/dsh-local-ai-policy) | first row of both presets | Per-call decision: web allowed, MATLAB tools only in `matlab`, Playwright asks, Toolkit reads denied outside `matlab`. |
+| `matlab-reference` | [ThomasTZh/dsh-matlab-reference](https://github.com/ThomasTZh/dsh-matlab-reference) | `matlab` only | `search_matlab_skills` and `read_matlab_skill` over the Toolkit catalogue, bounded pages, continuation offsets. |
+| `mcp-auto-permission` | [ThomasTZh/dsh-mcp-auto-permission](https://github.com/ThomasTZh/dsh-mcp-auto-permission) | bundle | Adds the `workspace-write-mcp` preset and claims `mcp__*` approval requests as `allowed-once`; exposes `mcpAutoPermission.autoApproves()`. |
+| `kde-notify` | [ThomasTZh/dsh-kde-notify](https://github.com/ThomasTZh/dsh-kde-notify) | bundle | KDE Connect notification on an approval or question request; skips an approval claimed by `mcpAutoPermission`; no turn-completion or failure alerts. |
+| notification delivery | the same repository, `plugins/notifications/notifications.mjs` | imported by `kde-notify` | Throttling, log at `~/.local/state/local-ai/notifications.log`, config at `~/.config/local-ai/notifications.json`. |
 
 The two file-path plugins are mounted by absolute path, so the profile patch
-carries `__LOCAL_AI__` placeholders rather than package names.
+carries `__LOCAL_AI__` placeholders rather than package names. No component
+source is stored in this repository: each row above is installed from its own
+repository at the pin recorded in [`../components.yml`](../components.yml).
 
 ## Permission presets
 
@@ -105,8 +107,8 @@ asks `mcpAutoPermission` before alerting, because the approval service logs
 
 | Skill | Owner | Where it lives |
 |---|---|---|
-| `brainstorm` | this repository | `~/.agents/skills/brainstorm`, symlinked into `~/.config/local-ai/skills/on-request` |
-| `pub-gh` | this repository | `~/.agents/skills/pub-gh` with two templates under `assets/`, symlinked into `~/.config/local-ai/skills/on-request` |
+| `brainstorm` | [ThomasTZh/dsh-skill-brainstorm](https://github.com/ThomasTZh/dsh-skill-brainstorm) | `~/.agents/skills/brainstorm`, symlinked into `~/.config/local-ai/skills/on-request` |
+| `pub-gh` | [ThomasTZh/dsh-skill-pub-gh](https://github.com/ThomasTZh/dsh-skill-pub-gh) | `~/.agents/skills/pub-gh` with two templates under `assets/`, symlinked into `~/.config/local-ai/skills/on-request` |
 | `ub-mode` | [unclebob/ub-mode](https://github.com/unclebob/ub-mode) | installed under `~/.agents/skills`, not copied here |
 | `directing-image-prompts` | [Nanoleava/directing-image-prompts](https://github.com/Nanoleava/directing-image-prompts) | cloned at a pin under `~/.agents/skills` and symlinked into `~/.config/local-ai/skills/on-request`; the shared root also reaches Pi |
 | MATLAB Toolkit skills | MathWorks | 120 symlinks from `__MATLAB_HOME__/agentic-toolkits/matlab/skills-catalog` into `~/.agents/skills`; `matlab-core` is also scanned directly by the `matlab` preset |
@@ -128,13 +130,13 @@ the two local presets read only their explicit roots.
 
 | Placeholder | Resolves to | Why |
 |---|---|---|
-| `__SETUP_ROOT__` | wherever this repository is cloned | The `link:` target for `dsh-chat-preset`, `dsh-mcp-auto-permission`, and `dsh-kde-notify`. |
+| `__DSH_HOME__` | `$HOME/.dsh` | The `link:` targets for the `dsh-chat-preset` and `dsh-mcp-auto-permission` bundles. |
 | `__LOCAL_AI__` | `$HOME/.config/local-ai` | Policy, notification core, and MATLAB reference plugins. |
 | `__MATLAB_HOME__` | `$HOME/.matlab` | The MathWorks Agentic Toolkit catalogue. |
 | `__HOME__` | `$HOME` | Playwright MCP binary path. |
 | `__WORKSPACE__` | a directory outside this repository | The Office MCP server project. `install.sh` asks for it. |
 
-Root `notifications.mjs` is a symlink to `plugins/notifications/notifications.mjs`.
 The notification bundle imports `../../../notifications.mjs`, which resolves to
-that root link in the release tree and to `$LOCAL_AI/notifications.mjs` at the
-live install. It is a path shim, not a second copy.
+`$LOCAL_AI/notifications.mjs` at the live install. That file comes from
+`dsh-kde-notify/plugins/notifications/notifications.mjs`; it is one module
+installed once, not a second copy.

@@ -35,17 +35,20 @@ Components this setup mounts, installs, or reads. None of them is copied into th
 
 None. No upstream file is patched, vendored, or redistributed here. `dsh-preset-switcher` is a fork, but it is the fork maintainer's published package: this setup only pins it and installs it from npm, so there is nothing to reconstruct from patches.
 
+`profiles/web/cordis.patch.yml` restates loader defaults taken from the shipped `web` profile and is MIT compatible. It is an authored configuration layer for one host, not a modification of harness source, so it is covered by the root `LICENSE` along with the other original files.
+
 ## Unmodified dependencies
 
 Install each component from its own project or package manager at the pin in [`upstreams.yml`](upstreams.yml). Completed packages, compiled binaries, and upstream skill text are deliberately absent, so restoring this setup means installing them, not copying them.
 
 ## Copyright and licence compliance
 
-- **Original files:** the MIT [`LICENSE`](LICENSE) covers `plugins/dsh-chat-preset`, `plugins/local-ai-policy`, `plugins/notifications`, `plugins/dsh-kde-notify`, `plugins/dsh-mcp-auto-permission`, `plugins/matlab-reference`, `skills/brainstorm`, `skills/pub-gh`, the two presets in `profiles/web/cordis.patch.yml`, `AGENTS.md`, and the documentation files in this repository.
+- **Original files:** the MIT [`LICENSE`](LICENSE) covers `profiles/web/cordis.patch.yml`, `profiles/web/package.json`, `components.yml`, `AGENTS.md`, `docs/`, and the documentation files in this repository.
+- **First-party components:** the plugins and skills this profile mounts are original work published from their own repositories, listed with pins in [`components.yml`](components.yml). No component source is stored or licensed here.
 - **Upstream notices:** they stay with their own projects, because no upstream file is present here. No third-party licence text needs to be redistributed for that reason.
 - **Restricted components:** the MathWorks toolkit is licensed for use with MathWorks products; `ub-mode` and `directing-image-prompts` declare no licence upstream. All three are installed separately and are neither copied nor relicensed here.
 - **Unresolved:** none. If a future change copies an upstream file, its project, exact revision, retained notice, and licence must be added to this file before the change is published.
 
 ## Not third-party
 
-Original to this setup: the two presets in `profiles/web/cordis.patch.yml`, the chat preset bundle and its guard, the three local plugin modules, the two skills, and the global instructions. The local web gateway, `matlab-server`, and the Office MCP project are also original, but they are not published here, so they carry no upstream credit.
+The local web gateway, `matlab-server`, and the Office MCP project are original to the recording machine, are not published in this repository, and carry no upstream credit. The plugins and skills the profile mounts are first-party too, but they live in their own repositories ([`components.yml`](components.yml)) rather than here.

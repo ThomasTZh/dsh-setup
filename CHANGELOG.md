@@ -2,6 +2,14 @@
 
 Newest first, ordered rather than dated. The repository records the configuration that runs; a calendar date on the record would make it read as a snapshot that ages, so entries describe what changed instead.
 
+## Component repositories
+
+- Moved every original component into its own public repository and recorded the pins in [`components.yml`](components.yml): `dsh-chat-preset`, `dsh-mcp-auto-permission`, `dsh-kde-notify` with its delivery module, `dsh-local-ai-policy`, `dsh-matlab-reference`, `dsh-skill-brainstorm`, and `dsh-skill-pub-gh`.
+- Removed `plugins/` and `skills/` from this repository. The profile patch, the package manifest, the instructions, and the documentation are what remains; every component is linked by repository and pin.
+- Repointed the three `link:` dependencies at the install destinations, `__DSH_HOME__/local-plugins/...` and `__LOCAL_AI__/plugins/...`, so the record matches the running profile. The placeholder set is now `__DSH_HOME__`, `__LOCAL_AI__`, `__HOME__`, `__MATLAB_HOME__`, and `__WORKSPACE__`.
+- Restore now clones the seven repositories at their pins and copies the listed files to the destinations the profile reads.
+- Added `dsh-chat-preset` guard tests in the extracted repository; the other suites moved unchanged and still pass.
+
 ## directing-image-prompts skill
 
 - Added `directing-image-prompts` to [Restore](README.md#restore) and the skill inventory as a clone pinned at `78e605fcb64293cc70516a5c522bc4dc1763e90f` of [Nanoleava/directing-image-prompts](https://github.com/Nanoleava/directing-image-prompts), installed under `~/.agents/skills` and symlinked into the on-request root.
