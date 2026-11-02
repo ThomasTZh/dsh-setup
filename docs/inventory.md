@@ -75,7 +75,7 @@ Three local presets, plus the shipped `standard`, `minimal`, `ptc`, and `cordis`
 `general` and `matlab` both mount `skill-filesystem` with
 `includeDefaultRoots: false` and an explicit `customSkillDirs` list, so the skill
 catalog is exactly what those roots contain. `chat` uses the default roots,
-which is how `ub-mode` and `brainstorm` reach it.
+which is how the shared-root skills reach it.
 
 ## Local plugins
 
@@ -109,12 +109,13 @@ asks `mcpAutoPermission` before alerting, because the approval service logs
 |---|---|---|
 | `brainstorm` | [ThomasTZh/dsh-skill-brainstorm](https://github.com/ThomasTZh/dsh-skill-brainstorm) | `~/.agents/skills/brainstorm`, symlinked into `~/.config/local-ai/skills/on-request` |
 | `pub-gh` | [ThomasTZh/dsh-skill-pub-gh](https://github.com/ThomasTZh/dsh-skill-pub-gh) | `~/.agents/skills/pub-gh` with two templates under `assets/`, symlinked into `~/.config/local-ai/skills/on-request` |
+| `mini-backup` | [ThomasTZh/mini-backup](https://github.com/ThomasTZh/mini-backup) | `~/.agents/skills/mini-backup`, symlinked into `~/.config/local-ai/skills/on-request` |
 | `ub-mode` | [unclebob/ub-mode](https://github.com/unclebob/ub-mode) | installed under `~/.agents/skills`, not copied here |
 | `directing-image-prompts` | [Nanoleava/directing-image-prompts](https://github.com/Nanoleava/directing-image-prompts) | cloned at a pin under `~/.agents/skills` and symlinked into `~/.config/local-ai/skills/on-request`; the shared root also reaches Pi |
 | MATLAB Toolkit skills | MathWorks | 120 symlinks from `__MATLAB_HOME__/agentic-toolkits/matlab/skills-catalog` into `~/.agents/skills`; `matlab-core` is also scanned directly by the `matlab` preset |
 
 Global skill roots exist at `~/.dsh/skills` (absent on this machine) and
-`~/.agents/skills` (present, 124 entries). The `chat` preset reads the defaults;
+`~/.agents/skills` (present, 125 entries). The `chat` preset reads the defaults;
 the two local presets read only their explicit roots.
 
 ## Not tracked, on purpose

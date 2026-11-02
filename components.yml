@@ -89,3 +89,15 @@ components:
       - SKILL.md
       - assets
     test: front matter parse
+
+  - name: mini-backup
+    kind: skill
+    skill: mini-backup
+    repository: https://github.com/ThomasTZh/mini-backup
+    pin: 833364ff54841a98bcded5ef3223c75e8649cf64
+    installs:
+      - "~/.agents/skills/mini-backup"
+      - "$LOCAL_AI/skills/on-request/mini-backup (symlink)"
+    files:
+      - SKILL.md
+    test: front matter parse

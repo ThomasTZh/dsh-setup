@@ -2,6 +2,13 @@
 
 Newest first, ordered rather than dated. The repository records the configuration that runs; a calendar date on the record would make it read as a snapshot that ages, so entries describe what changed instead.
 
+## mini-backup skill
+
+- Added `mini-backup` to [`components.yml`](components.yml) at pin `833364ff54841a98bcded5ef3223c75e8649cf64`, installed at `~/.agents/skills/mini-backup` and symlinked into the on-request root.
+- The skill backs up the current workspace project outside the workspace, keeps only files needed for the current build, and excludes VCS history, dependencies, downloads, caches, and build outputs.
+- Updated the component count, restore block, skill inventory, and verification rows to eight components.
+- Skill restore now copies the listed component files rather than the whole clone, so `.git` and repository docs are not installed.
+
 ## Component repositories
 
 - Moved every original component into its own public repository and recorded the pins in [`components.yml`](components.yml): `dsh-chat-preset`, `dsh-mcp-auto-permission`, `dsh-kde-notify` with its delivery module, `dsh-local-ai-policy`, `dsh-matlab-reference`, `dsh-skill-brainstorm`, and `dsh-skill-pub-gh`.
