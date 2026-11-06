@@ -81,7 +81,7 @@ components:
     kind: skill
     skill: pub-gh
     repository: https://github.com/ThomasTZh/dsh-skill-pub-gh
-    pin: b5968cf5132353f4eb14ddf4cad4fff1b7fb0bb8
+    pin: 327842ce13fcb7033bbe13f0beb7c1eefc72b607
     installs:
       - "~/.agents/skills/pub-gh"
       - "$LOCAL_AI/skills/on-request/pub-gh (symlink)"

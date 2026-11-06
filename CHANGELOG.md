@@ -2,6 +2,11 @@
 
 Newest first, ordered rather than dated. The repository records the configuration that runs; a calendar date on the record would make it read as a snapshot that ages, so entries describe what changed instead.
 
+## Plain-language opening
+
+- The README abstract and the GitHub repository description now use everyday words, so a newcomer with no technical background understands what this repository records.
+- Advanced `dsh-skill-pub-gh` to pin `327842ce13fcb7033bbe13f0beb7c1eefc72b607`, which adds the plain-language rule for repository descriptions and README abstracts; the restore block pin moved with it.
+
 ## mini-backup skill
 
 - Added `mini-backup` to [`components.yml`](components.yml) at pin `833364ff54841a98bcded5ef3223c75e8649cf64`, installed at `~/.agents/skills/mini-backup` and symlinked into the on-request root.

@@ -4,13 +4,7 @@ The composition of the [DeepSeek Harness](https://github.com/deepseek-ai/deepsee
 
 ## Abstract
 
-**Problem.** The harness composes its behaviour from layered bundles, a profile patch, plugins, and skills. Reinstalling the harness reproduces none of the decisions taken on top of it, and a single repository that holds both the wiring and every component mixes two very different things: a host-specific configuration record and reusable code.
-
-**Contribution.** This repository is the wiring only. The plugins and skills the profile mounts are original work, published from their own repositories and pinned here by commit in [`components.yml`](components.yml). What remains is the profile patch, the package manifest, the global instructions, the inventory, and the third-party records. The novel parts are the policy layer, the chat guard, the MATLAB reference tools, the `workspace-write-mcp` approval predicate, and the notifier's suppression of auto-approved calls; each is described and tested in its own repository.
-
-**Approach.** No component source is stored here. Restoring copies the composition files to their destinations and clones each component at its pin ([Restore](#restore)).
-
-**Evidence.** The restore block completes from a temporary `HOME` using only clones of the published repositories, every installed file matches its pinned commit byte for byte, the composition dump names all three local presets, and the privacy and link checks are clean. Commands and outcomes are in [Verification](#verification).
+This repository records how one AI assistant setup is put together on a single computer: its settings, the small add-ons it loads, and where each part comes from. The add-ons are kept in their own projects, so this repository records how they connect rather than copying their code. Following the recorded versions and steps rebuilds the setup on a similar computer; [Verification](#verification) says what was tested.
 
 ## Composition
 
@@ -105,7 +99,7 @@ clone dsh-kde-notify           230699f3dc001bae8c55e64ce3e12c832b0a0dc5
 clone dsh-local-ai-policy      02dd3c8ba840536a955b1cb355959c401f87912d
 clone dsh-matlab-reference     5a2f2b77e20fd4f935d4c87e707a3654cc7f0c19
 clone dsh-skill-brainstorm     8133287e181351aee2070dcaf5f651c1a84abbe5
-clone dsh-skill-pub-gh         b5968cf5132353f4eb14ddf4cad4fff1b7fb0bb8
+clone dsh-skill-pub-gh         327842ce13fcb7033bbe13f0beb7c1eefc72b607
 clone mini-backup              833364ff54841a98bcded5ef3223c75e8649cf64
 
 cp profiles/web/cordis.patch.yml profiles/web/package.json "$DSH_HOME/profiles/web/"
