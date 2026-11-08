@@ -58,12 +58,12 @@ components:
   - name: dsh-matlab-reference
     kind: module
     repository: https://github.com/ThomasTZh/dsh-matlab-reference
-    pin: 5a2f2b77e20fd4f935d4c87e707a3654cc7f0c19
+    pin: e7ff3d574b1ee61278ee36c160bf8b1543ca8efd
     installs:
       - "$LOCAL_AI/plugins/matlab-reference.mjs"
     files:
       - matlab-reference.mjs
-    test: DSH_PACKAGE_JSON=<harness package.json> node --test matlab-reference.test.mjs
+    test: node --test matlab-reference.test.mjs
 
   - name: dsh-skill-brainstorm
     kind: skill

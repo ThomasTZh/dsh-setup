@@ -2,6 +2,13 @@
 
 Newest first, ordered rather than dated. The repository records the configuration that runs; a calendar date on the record would make it read as a snapshot that ages, so entries describe what changed instead.
 
+## matlab-reference harness lookup
+
+- Advanced `dsh-matlab-reference` to pin `e7ff3d574b1ee61278ee36c160bf8b1543ca8efd`; the restore block pin moved with it.
+- The plugin accepts a harness package only when `@deepseek-ai/dsh-tools` resolves from it, checking `DSH_PACKAGE_JSON`, the running script, then the `dsh` on `PATH`. The previous lookup accepted any wrapper `package.json`, so a server started by a plugin manager failed to load `js-yaml` and the `matlab` preset could not mount.
+- `js-yaml` now falls back to a built-in front-matter parser, and an unreachable harness reports the packages it tried instead of failing at import.
+- Added two regression tests for the wrapper launch and the unreachable harness; the component test command is `node --test matlab-reference.test.mjs` without `DSH_PACKAGE_JSON`.
+
 ## Plain-language opening
 
 - The README abstract and the GitHub repository description now use everyday words, so a newcomer with no technical background understands what this repository records.

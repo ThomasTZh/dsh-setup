@@ -97,7 +97,7 @@ clone dsh-chat-preset          baaf5755623942f3a33eb7877b777f909794633b
 clone dsh-mcp-auto-permission  8b12bf012c4fcd3ae877deefa18376fddf716110
 clone dsh-kde-notify           230699f3dc001bae8c55e64ce3e12c832b0a0dc5
 clone dsh-local-ai-policy      02dd3c8ba840536a955b1cb355959c401f87912d
-clone dsh-matlab-reference     5a2f2b77e20fd4f935d4c87e707a3654cc7f0c19
+clone dsh-matlab-reference     e7ff3d574b1ee61278ee36c160bf8b1543ca8efd
 clone dsh-skill-brainstorm     8133287e181351aee2070dcaf5f651c1a84abbe5
 clone dsh-skill-pub-gh         327842ce13fcb7033bbe13f0beb7c1eefc72b607
 clone mini-backup              833364ff54841a98bcded5ef3223c75e8649cf64
