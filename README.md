@@ -23,7 +23,7 @@ Original files first, then the records for third-party work. Install destination
 | Inventory | [`docs/inventory.md`](docs/inventory.md) | Override table, bundle order, and reasoning |
 | Licence | [`LICENSE`](LICENSE) | MIT, original files only |
 | Changelog | [`CHANGELOG.md`](CHANGELOG.md) | What changed, newest first |
-| Web launcher | [`launchers/`](launchers/) | Konsole launcher that runs `dsh web` in a terminal that stays open; see its README |
+| Web launcher | [`launchers/`](launchers/) | Supervisor and Konsole entry that run `dsh web`; Ctrl+C stops the process group and closes the window |
 
 **Third-party records**
 
@@ -74,7 +74,7 @@ The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max
 | Runtime | Node `v22.22.2` for the component tests |
 | Package manager | pnpm `12.15.0` for the profile dependencies |
 | Git | Needed once to clone the nine component repositories |
-| Python | Python 3 with PyYAML, for the YAML check below |
+| Python | Python 3.9 or newer, for the launcher supervisor; PyYAML, for the YAML check below |
 | Network | Needed once to install the pinned packages and clone the components; no credential is stored here |
 
 ### Restore
@@ -141,10 +141,12 @@ dsh --profile web --dump-config | grep -q "workspace-write-mcp"  # permission pr
 dsh web                                                           # restart to load the bundle
 ```
 
-The optional launcher is a separate copy:
+The optional launcher is a separate copy. The entry starts the supervisor from
+`~/.local/share/dsh-setup/`, so install both files:
 
 ```sh
-mkdir -p "$HOME/.local/share/applications"
+mkdir -p "$HOME/.local/share/dsh-setup" "$HOME/.local/share/applications"
+cp launchers/run-dsh.py "$HOME/.local/share/dsh-setup/"
 cp launchers/DSH.desktop "$HOME/.local/share/applications/"
 ```
 
@@ -162,12 +164,12 @@ Run against this tree, the nine published repositories, and the live harness on 
 | YAML parses | `python3 -c 'import yaml,sys; yaml.safe_load(open(sys.argv[1]))'` on `profiles/web/cordis.patch.yml`, `components.yml`, and `upstreams.yml` | pass |
 | JSON parses | `python3 -m json.tool profiles/web/package.json` | pass |
 | No component source | `git ls-files` | pass: only the composition, launcher, documentation, and manifests are tracked |
-| Launcher | `desktop-file-validate launchers/DSH.desktop`; double-click a local copy of the launcher on the recorded machine | pass: Konsole opened, `dsh web` served the authenticated page, and the window stayed open after the server stopped |
+| Launcher | `python3 -m py_compile launchers/run-dsh.py`; `desktop-file-validate launchers/DSH.desktop`; stub-service Ctrl+C once, Ctrl+C twice, and SIGHUP runs | pass: graceful stop, forced stop in 0.4s, SIGHUP stop; ports closed and process groups reaped |
 | Composition | `dsh --profile web --dump-config` on the live harness | exit 0, `preset-chat`, `preset-general`, `preset-matlab`, and `workspace-write-mcp` present |
 | Links | every relative link in `README.md`, `THIRD_PARTY.md`, `docs/inventory.md`, and `CHANGELOG.md` resolved | pass |
 | Privacy | `grep` for absolute home paths and secret-shaped strings across tracked files | clean |
 
-**Not tested:** `pnpm install` from an empty `node_modules`, a full `dsh web` restart from the restored tree, and the four external MCP servers, which are not in this repository. The behaviour of each component is verified in its own repository rather than here.
+**Not tested:** a live `dsh web` launch from the desktop entry (the agent sandbox mounts `~/.dsh` read-only, so the supervisor was exercised with stub services), `pnpm install` from an empty `node_modules`, a full `dsh web` restart from the restored tree, and the four external MCP servers, which are not in this repository. The behaviour of each component is verified in its own repository rather than here.
 
 **Observed warning.** The composition dump reports `patch: entry "<id>" not found` for eight ids: `web-ui-pet`, `web-ui-remote-web-ui`, `web-ui-task-board-github`, `web-ui-task-board`, `web-ui-remote-bridge`, `web-ui-liangshen`, `web-ui-skill-explorer`, and `plugin-market`. None of those ids exists in the composed tree, so the six disables and the one enable in this patch have no effect; the Skill Center is delivered by the `@linxin666/dsh-client-ui-skill-explorer` bundle listed in the profile, and the composed tree carries `tool-plugin-market` instead of `plugin-market`. The dump runs against the live profile, which carries one row more than this record (`plugin-market`), so that single warning is reported here without a matching entry in the recorded patch. The patch is left as recorded rather than changed to match, because the restore target is the configuration that runs.
 

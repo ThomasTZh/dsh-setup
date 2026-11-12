@@ -8,3 +8,5 @@ pnpm-lock.yaml
 # Local scratch.
 *.log
 .DS_Store
+__pycache__/
+*.pyc

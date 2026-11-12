@@ -2,6 +2,14 @@
 
 Newest first, ordered rather than dated. The repository records the configuration that runs; a calendar date on the record would make it read as a snapshot that ages, so entries describe what changed instead.
 
+## Launcher stop control
+
+- Replaced the held-open Konsole entry with `launchers/run-dsh.py`, a foreground supervisor that runs `dsh web` in its own process group and starts it with `--no-browser` because `dsh web` opens its own authenticated URL.
+- One Ctrl+C sends SIGTERM to the process group, waits 15 seconds, escalates to SIGKILL, then exits so Konsole closes. A second Ctrl+C force-stops immediately. Closing the window sends SIGHUP and takes the same clean path.
+- The supervisor runs `dsh web` from the terminal's working directory through a login Bash, keeps the instance lock and ten newest logs under `$XDG_STATE_HOME/dsh-web/launcher/`, and holds the window open on a startup or runtime failure.
+- The desktop entry now installs both `run-dsh.py` and `DSH.desktop`, with the supervisor under `$HOME/.local/share/dsh-setup/`; the README layout, requirements, restore, verification, and launcher README follow.
+- Verified with stub services: graceful stop, forced stop in 0.4 seconds, SIGHUP stop, closed ports, and reaped process groups; `py_compile` and `desktop-file-validate` pass. A live `dsh web` launch remains a manual check because the agent sandbox mounts `~/.dsh` read-only.
+
 ## Web launcher
 
 - Added `launchers/DSH.desktop`, a Konsole launcher that opens a terminal and runs `dsh web` in the user's interactive Bash, matching a manual terminal launch.
