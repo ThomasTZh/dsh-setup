@@ -2,6 +2,13 @@
 
 Newest first, ordered rather than dated. The repository records the configuration that runs; a calendar date on the record would make it read as a snapshot that ages, so entries describe what changed instead.
 
+## create-launcher skill
+
+- Added `dsh-skill-create-launcher` to [`components.yml`](components.yml) at pin `4a6400b8a3989b7feb010a519df0ceb917460f29`, installed at `~/.agents/skills/create-launcher` with its `references/` templates and symlinked into the on-request root.
+- The skill builds a double-click launcher for a project's product, starts every service in its own process group, opens the frontend, stops cleanly on one Ctrl+C, and force-stops on a second.
+- The on-request symlink makes the skill visible to the `general` and `matlab` presets; the `standard` and `chat` presets read the shared `~/.agents/skills` root, which Pi also scans.
+- Updated the component count, restore block, skill inventory, and verification rows to nine components and 126 shared-root entries.
+
 ## matlab-reference harness lookup
 
 - Advanced `dsh-matlab-reference` to pin `e7ff3d574b1ee61278ee36c160bf8b1543ca8efd`; the restore block pin moved with it.

@@ -77,6 +77,19 @@ components:
       - SKILL.md
     test: front matter parse
 
+  - name: dsh-skill-create-launcher
+    kind: skill
+    skill: create-launcher
+    repository: https://github.com/ThomasTZh/dsh-skill-create-launcher
+    pin: 4a6400b8a3989b7feb010a519df0ceb917460f29
+    installs:
+      - "~/.agents/skills/create-launcher"
+      - "$LOCAL_AI/skills/on-request/create-launcher (symlink)"
+    files:
+      - SKILL.md
+      - references
+    test: front matter parse
+
   - name: dsh-skill-pub-gh
     kind: skill
     skill: pub-gh

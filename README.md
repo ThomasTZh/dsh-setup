@@ -1,6 +1,6 @@
 # dsh-setup
 
-The composition of the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) `web` profile this machine runs: the profile patch with its two local presets, the `chat` preset wiring, the global instructions, the pins for eight original component repositories, and the third-party credits. Recorded against harness `0.2.1-rc.2` on Linux.
+The composition of the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) `web` profile this machine runs: the profile patch with its two local presets, the `chat` preset wiring, the global instructions, the pins for nine original component repositories, and the third-party credits. Recorded against harness `0.2.1-rc.2` on Linux.
 
 ## Abstract
 
@@ -33,7 +33,7 @@ Original files first, then the records for third-party work. Install destination
 
 ### Components
 
-Eight original repositories, each with its own README, licence, and recorded verification. The full pins are the commits that were published and verified when the split was recorded; [`components.yml`](components.yml) and [Restore](#restore) carry the SHAs.
+Nine original repositories, each with its own README, licence, and recorded verification. The full pins are the commits that were published and verified when the split was recorded; [`components.yml`](components.yml) and [Restore](#restore) carry the SHAs.
 
 | Component | Repository | Installs to |
 |---|---|---|
@@ -43,6 +43,7 @@ Eight original repositories, each with its own README, licence, and recorded ver
 | `dsh-local-ai-policy` | [ThomasTZh/dsh-local-ai-policy](https://github.com/ThomasTZh/dsh-local-ai-policy) | `$LOCAL_AI/policy.mjs` |
 | `dsh-matlab-reference` | [ThomasTZh/dsh-matlab-reference](https://github.com/ThomasTZh/dsh-matlab-reference) | `$LOCAL_AI/plugins/matlab-reference.mjs` |
 | `dsh-skill-brainstorm` | [ThomasTZh/dsh-skill-brainstorm](https://github.com/ThomasTZh/dsh-skill-brainstorm) | `~/.agents/skills/brainstorm` and a symlink in the on-request root |
+| `dsh-skill-create-launcher` | [ThomasTZh/dsh-skill-create-launcher](https://github.com/ThomasTZh/dsh-skill-create-launcher) | `~/.agents/skills/create-launcher` and a symlink in the on-request root |
 | `dsh-skill-pub-gh` | [ThomasTZh/dsh-skill-pub-gh](https://github.com/ThomasTZh/dsh-skill-pub-gh) | `~/.agents/skills/pub-gh` and a symlink in the on-request root |
 | `mini-backup` | [ThomasTZh/mini-backup](https://github.com/ThomasTZh/mini-backup) | `~/.agents/skills/mini-backup` and a symlink in the on-request root |
 
@@ -60,7 +61,7 @@ The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max
 | `matlab` | 1 | `preset-matlab` row | the same, plus goals, MATLAB MCP, and `matlab-reference`; skill roots are the on-request directory and the toolkit's `matlab-core` |
 | `chat` | 5 | `@local/dsh-chat-preset` | persona, guard, `AGENTS.md`, skill, web tools, compaction; no filesystem, no shell |
 
-`general` and `matlab` both mount `skill-filesystem` with `includeDefaultRoots: false` and an explicit `customSkillDirs` list, so their catalogue is exactly what those roots contain. `chat` uses the default roots. The three skill components are installed into `~/.agents/skills` and symlinked into the on-request root, so they reach all three presets and any other agent that scans the shared root.
+`general` and `matlab` both mount `skill-filesystem` with `includeDefaultRoots: false` and an explicit `customSkillDirs` list, so their catalogue is exactly what those roots contain. `chat` and the shipped `standard` preset use the default roots. The four skill components are installed into `~/.agents/skills` and symlinked into the on-request root, so they reach the local presets, the shared-root presets, and any other agent that scans `~/.agents/skills`.
 
 ### Requirements
 
@@ -70,13 +71,13 @@ The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max
 | Harness | DeepSeek Harness `0.2.1-rc.2`, installed globally from npm [1] |
 | Runtime | Node `v22.22.2` for the component tests |
 | Package manager | pnpm `12.15.0` for the profile dependencies |
-| Git | Needed once to clone the eight component repositories |
+| Git | Needed once to clone the nine component repositories |
 | Python | Python 3 with PyYAML, for the YAML check below |
 | Network | Needed once to install the pinned packages and clone the components; no credential is stored here |
 
 ### Restore
 
-No installer is included. Restoring is a clone of eight pinned repositories, a copy to the destinations the profile reads, and five placeholder substitutions:
+No installer is included. Restoring is a clone of nine pinned repositories, a copy to the destinations the profile reads, and five placeholder substitutions:
 
 ```sh
 DSH_HOME=${DSH_HOME:-$HOME/.dsh}
@@ -86,8 +87,8 @@ COMPONENTS=${COMPONENTS:-$HOME/dsh-components}
 mkdir -p "$DSH_HOME/profiles/web" "$DSH_HOME/local-plugins/dsh-chat-preset" \
          "$DSH_HOME/local-plugins/dsh-mcp-auto-permission" "$LOCAL_AI/plugins" \
          "$LOCAL_AI/skills/on-request" "$HOME/.agents/skills/brainstorm" \
-         "$HOME/.agents/skills/pub-gh" "$HOME/.agents/skills/mini-backup" \
-         "$COMPONENTS"
+         "$HOME/.agents/skills/create-launcher" "$HOME/.agents/skills/pub-gh" \
+         "$HOME/.agents/skills/mini-backup" "$COMPONENTS"
 
 clone() {  # clone <repo> <pin>
   git clone "https://github.com/ThomasTZh/$1" "$COMPONENTS/$1"
@@ -99,6 +100,7 @@ clone dsh-kde-notify           230699f3dc001bae8c55e64ce3e12c832b0a0dc5
 clone dsh-local-ai-policy      02dd3c8ba840536a955b1cb355959c401f87912d
 clone dsh-matlab-reference     e7ff3d574b1ee61278ee36c160bf8b1543ca8efd
 clone dsh-skill-brainstorm     8133287e181351aee2070dcaf5f651c1a84abbe5
+clone dsh-skill-create-launcher 4a6400b8a3989b7feb010a519df0ceb917460f29
 clone dsh-skill-pub-gh         327842ce13fcb7033bbe13f0beb7c1eefc72b607
 clone mini-backup              833364ff54841a98bcded5ef3223c75e8649cf64
 
@@ -116,10 +118,13 @@ cp "$COMPONENTS/dsh-kde-notify/plugins/notifications/notifications.mjs" "$LOCAL_
 cp "$COMPONENTS/dsh-local-ai-policy/policy.mjs" "$LOCAL_AI/policy.mjs"
 cp "$COMPONENTS/dsh-matlab-reference/matlab-reference.mjs" "$LOCAL_AI/plugins/matlab-reference.mjs"
 cp "$COMPONENTS/dsh-skill-brainstorm/SKILL.md" "$HOME/.agents/skills/brainstorm/"
+cp "$COMPONENTS/dsh-skill-create-launcher/SKILL.md" "$HOME/.agents/skills/create-launcher/"
+cp -r "$COMPONENTS/dsh-skill-create-launcher/references" "$HOME/.agents/skills/create-launcher/"
 cp "$COMPONENTS/dsh-skill-pub-gh/SKILL.md" "$HOME/.agents/skills/pub-gh/"
 cp -r "$COMPONENTS/dsh-skill-pub-gh/assets" "$HOME/.agents/skills/pub-gh/"
 cp "$COMPONENTS/mini-backup/SKILL.md" "$HOME/.agents/skills/mini-backup/"
 ln -sfn "$HOME/.agents/skills/brainstorm" "$LOCAL_AI/skills/on-request/brainstorm"
+ln -sfn "$HOME/.agents/skills/create-launcher" "$LOCAL_AI/skills/on-request/create-launcher"
 ln -sfn "$HOME/.agents/skills/pub-gh" "$LOCAL_AI/skills/on-request/pub-gh"
 ln -sfn "$HOME/.agents/skills/mini-backup" "$LOCAL_AI/skills/on-request/mini-backup"
 cp AGENTS.md "$DSH_HOME/AGENTS.md"
@@ -136,13 +141,15 @@ dsh web                                                           # restart to l
 
 ## Verification
 
-Run against this tree, the eight published repositories, and the live harness on the recorded machine:
+Run against this tree, the nine published repositories, and the live harness on the recorded machine:
 
 | Check | Command | Result |
 |---|---|---|
-| Restore from pins | restore block with temporary `HOME`, `DSH_HOME`, `LOCAL_AI`, and `COMPONENTS`, cloning from GitHub | pass: eight clones at their pins, every destination populated |
+| Restore from pins | restore block with temporary `HOME`, `DSH_HOME`, `LOCAL_AI`, and `COMPONENTS`, cloning from GitHub | pass: nine clones at their pins, every destination populated |
 | Installed files match pins | compare each installed file with its clone | pass: byte-identical |
 | Component links | `gh api repos/ThomasTZh/<repo>/commits/<pin>` for each row of [`components.yml`](components.yml) | pass: every repository and pin resolves |
+| Create-launcher discovery | temporary `HOME`; copy the listed files to the install path, create the on-request symlink, and run `pi --mode rpc --offline` with `get_commands` | pass: `skill:create-launcher` present after install and absent after uninstall |
+| Harness skill roots | inspect the `skill-filesystem` rows for the `general` and `standard` presets and resolve the installed paths | pass: `general` reads the on-request symlink; `standard` reads the default `~/.agents/skills` root |
 | YAML parses | `python3 -c 'import yaml,sys; yaml.safe_load(open(sys.argv[1]))'` on `profiles/web/cordis.patch.yml`, `components.yml`, and `upstreams.yml` | pass |
 | JSON parses | `python3 -m json.tool profiles/web/package.json` | pass |
 | No component source | `git ls-files` | pass: only the composition, documentation, and manifests are tracked |
@@ -156,11 +163,11 @@ Run against this tree, the eight published repositories, and the live harness on
 
 ## Conclusion
 
-The repository supports restoring this harness composition on a comparable Linux host with the harness and the pinned packages installed, and it keeps the wiring separate from the reusable code. It does not restore the external MCP servers, the generated agent presets, or the third-party skill roots; the eight original components are restored by pinned clone, and the one upstream skill by a pinned clone of its own repository. The composition checks confirm that every pin resolves and that the restored tree matches the published commits.
+The repository supports restoring this harness composition on a comparable Linux host with the harness and the pinned packages installed, and it keeps the wiring separate from the reusable code. It does not restore the external MCP servers, the generated agent presets, or the third-party skill roots; the nine original components are restored by pinned clone, and the one upstream skill by a pinned clone of its own repository. The composition checks confirm that every pin resolves and that the restored tree matches the published commits.
 
 ## Acknowledgements
 
-The harness, its bundles, and its shipped presets are the work of the DeepSeek Harness project [1]. The eight profile plugins are the work of their own maintainers ([2]-[8]). `ub-mode` is Robert C. Martin's [9], the MATLAB Toolkit is MathWorks' [10], Playwright MCP is Microsoft's [11], `js-yaml` is the work of its contributors [12], and `directing-image-prompts` is Nanoleava's [13]. The eight components listed under [Components](#components) are original work published from this account. Every project, licence, and pin is listed in [`THIRD_PARTY.md`](THIRD_PARTY.md), [`upstreams.yml`](upstreams.yml), and [`components.yml`](components.yml).
+The harness, its bundles, and its shipped presets are the work of the DeepSeek Harness project [1]. The eight profile plugins are the work of their own maintainers ([2]-[8]). `ub-mode` is Robert C. Martin's [9], the MATLAB Toolkit is MathWorks' [10], Playwright MCP is Microsoft's [11], `js-yaml` is the work of its contributors [12], and `directing-image-prompts` is Nanoleava's [13]. The nine components listed under [Components](#components) are original work published from this account. Every project, licence, and pin is listed in [`THIRD_PARTY.md`](THIRD_PARTY.md), [`upstreams.yml`](upstreams.yml), and [`components.yml`](components.yml).
 
 ## References
 

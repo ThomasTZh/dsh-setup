@@ -108,6 +108,7 @@ asks `mcpAutoPermission` before alerting, because the approval service logs
 | Skill | Owner | Where it lives |
 |---|---|---|
 | `brainstorm` | [ThomasTZh/dsh-skill-brainstorm](https://github.com/ThomasTZh/dsh-skill-brainstorm) | `~/.agents/skills/brainstorm`, symlinked into `~/.config/local-ai/skills/on-request` |
+| `create-launcher` | [ThomasTZh/dsh-skill-create-launcher](https://github.com/ThomasTZh/dsh-skill-create-launcher) | `~/.agents/skills/create-launcher` with templates under `references/`, symlinked into `~/.config/local-ai/skills/on-request` |
 | `pub-gh` | [ThomasTZh/dsh-skill-pub-gh](https://github.com/ThomasTZh/dsh-skill-pub-gh) | `~/.agents/skills/pub-gh` with two templates under `assets/`, symlinked into `~/.config/local-ai/skills/on-request` |
 | `mini-backup` | [ThomasTZh/mini-backup](https://github.com/ThomasTZh/mini-backup) | `~/.agents/skills/mini-backup`, symlinked into `~/.config/local-ai/skills/on-request` |
 | `ub-mode` | [unclebob/ub-mode](https://github.com/unclebob/ub-mode) | installed under `~/.agents/skills`, not copied here |
@@ -115,8 +116,8 @@ asks `mcpAutoPermission` before alerting, because the approval service logs
 | MATLAB Toolkit skills | MathWorks | 120 symlinks from `__MATLAB_HOME__/agentic-toolkits/matlab/skills-catalog` into `~/.agents/skills`; `matlab-core` is also scanned directly by the `matlab` preset |
 
 Global skill roots exist at `~/.dsh/skills` (absent on this machine) and
-`~/.agents/skills` (present, 125 entries). The `chat` preset reads the defaults;
-the two local presets read only their explicit roots.
+`~/.agents/skills` (present, 126 entries). The `chat` and `standard` presets read
+the defaults; the two local presets read only their explicit roots.
 
 ## Not tracked, on purpose
 
