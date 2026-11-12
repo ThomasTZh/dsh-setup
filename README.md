@@ -23,6 +23,7 @@ Original files first, then the records for third-party work. Install destination
 | Inventory | [`docs/inventory.md`](docs/inventory.md) | Override table, bundle order, and reasoning |
 | Licence | [`LICENSE`](LICENSE) | MIT, original files only |
 | Changelog | [`CHANGELOG.md`](CHANGELOG.md) | What changed, newest first |
+| Web launcher | [`launchers/`](launchers/) | Konsole launcher that runs `dsh web` in a terminal that stays open; see its README |
 
 **Third-party records**
 
@@ -68,6 +69,7 @@ The patch layer carries the decisions: `deepseek-flash` at `reasoningEffort: max
 | Component | Requirement |
 |---|---|
 | Operating system | Linux with a desktop session; notifications are delivered through KDE Connect |
+| Terminal | Konsole, for the optional web launcher |
 | Harness | DeepSeek Harness `0.2.1-rc.2`, installed globally from npm [1] |
 | Runtime | Node `v22.22.2` for the component tests |
 | Package manager | pnpm `12.15.0` for the profile dependencies |
@@ -139,6 +141,13 @@ dsh --profile web --dump-config | grep -q "workspace-write-mcp"  # permission pr
 dsh web                                                           # restart to load the bundle
 ```
 
+The optional launcher is a separate copy:
+
+```sh
+mkdir -p "$HOME/.local/share/applications"
+cp launchers/DSH.desktop "$HOME/.local/share/applications/"
+```
+
 ## Verification
 
 Run against this tree, the nine published repositories, and the live harness on the recorded machine:
@@ -152,7 +161,8 @@ Run against this tree, the nine published repositories, and the live harness on 
 | Harness skill roots | inspect the `skill-filesystem` rows for the `general` and `standard` presets and resolve the installed paths | pass: `general` reads the on-request symlink; `standard` reads the default `~/.agents/skills` root |
 | YAML parses | `python3 -c 'import yaml,sys; yaml.safe_load(open(sys.argv[1]))'` on `profiles/web/cordis.patch.yml`, `components.yml`, and `upstreams.yml` | pass |
 | JSON parses | `python3 -m json.tool profiles/web/package.json` | pass |
-| No component source | `git ls-files` | pass: only the composition, documentation, and manifests are tracked |
+| No component source | `git ls-files` | pass: only the composition, launcher, documentation, and manifests are tracked |
+| Launcher | `desktop-file-validate launchers/DSH.desktop`; double-click a local copy of the launcher on the recorded machine | pass: Konsole opened, `dsh web` served the authenticated page, and the window stayed open after the server stopped |
 | Composition | `dsh --profile web --dump-config` on the live harness | exit 0, `preset-chat`, `preset-general`, `preset-matlab`, and `workspace-write-mcp` present |
 | Links | every relative link in `README.md`, `THIRD_PARTY.md`, `docs/inventory.md`, and `CHANGELOG.md` resolved | pass |
 | Privacy | `grep` for absolute home paths and secret-shaped strings across tracked files | clean |

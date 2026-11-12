@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=DeepSeek Harness Web
+GenericName=DeepSeek Harness
+Comment=Open a terminal and run dsh web
+Exec=/usr/bin/konsole --hold -e /bin/bash -ic "exec dsh web"
+Icon=utilities-terminal
+Terminal=false
+StartupNotify=false
+Categories=Development;

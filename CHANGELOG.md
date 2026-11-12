@@ -2,6 +2,12 @@
 
 Newest first, ordered rather than dated. The repository records the configuration that runs; a calendar date on the record would make it read as a snapshot that ages, so entries describe what changed instead.
 
+## Web launcher
+
+- Added `launchers/DSH.desktop`, a Konsole launcher that opens a terminal and runs `dsh web` in the user's interactive Bash, matching a manual terminal launch.
+- The harness prints its authenticated URL and opens the default browser itself; `--hold` keeps the terminal open after the server exits. The launcher carries no machine-specific workspace or icon path, and `launchers/README.md` records install and customisation.
+- Added the launcher to the README layout, requirements, and restore notes, with `desktop-file-validate` and a live launch as its verification.
+
 ## create-launcher skill
 
 - Added `dsh-skill-create-launcher` to [`components.yml`](components.yml) at pin `4a6400b8a3989b7feb010a519df0ceb917460f29`, installed at `~/.agents/skills/create-launcher` with its `references/` templates and symlinked into the on-request root.
